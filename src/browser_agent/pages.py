@@ -7,24 +7,15 @@ never reach the network by accident. Anything outside that origin is aborted.
 
 from __future__ import annotations
 
-import os
 from pathlib import Path
 
 from playwright.sync_api import BrowserContext, Route
 
 ORIGIN = "http://miniwob.local"
-ENV_VAR = "BROWSER_AGENT_MINIWOB_DIR"
 
 
 def miniwob_dir() -> Path:
-    """The directory holding ``core/``, ``common/`` and ``miniwob/``.
-
-    ``BROWSER_AGENT_MINIWOB_DIR`` overrides the vendored copy (the tests point it at an empty
-    directory to prove nothing silently falls back to it).
-    """
-    override = os.environ.get(ENV_VAR)
-    if override:
-        return Path(override)
+    """The vendored copy: ``core/``, ``common/`` and ``miniwob/`` from the pinned commit."""
     return Path(__file__).resolve().parents[2] / "vendor" / "miniwob"
 
 

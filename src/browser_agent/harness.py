@@ -7,7 +7,10 @@ through the shared action executor and read the benchmark's reward.
 
 from __future__ import annotations
 
+import json
+from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
+from pathlib import Path
 
 from browser_agent import oracles  # noqa: F401  (registers every oracle)
 from browser_agent.actions import Action, ActionError, execute
@@ -111,3 +114,35 @@ def run_oracle_episode(env: MiniWoBEnv, task: str, seed: int) -> EpisodeRecord:
     outcome = env.outcome()
     record.done, record.raw_reward, record.reason = outcome.done, outcome.raw_reward, outcome.reason
     return record
+
+
+def run_oracle(
+    tasks: list[str],
+    seeds: list[int],
+    out: Path,
+    progress: Callable[[EpisodeRecord], None] | None = None,
+) -> list[EpisodeRecord]:
+    """Run every (task, seed), appending one JSON line per episode to ``out``.
+
+    Episodes already in ``out`` are skipped, so an interrupted run resumes where it stopped.
+    """
+    done = {(e["task"], e["seed"]) for e in load_jsonl(out)} if out.exists() else set()
+    out.parent.mkdir(parents=True, exist_ok=True)
+    records: list[EpisodeRecord] = []
+    with MiniWoBEnv() as env, out.open("a", encoding="utf-8") as fh:
+        for task in tasks:
+            for seed in seeds:
+                if (task, seed) in done:
+                    continue
+                record = run_oracle_episode(env, task, seed)
+                fh.write(json.dumps(record.as_dict()) + "\n")
+                fh.flush()
+                records.append(record)
+                if progress is not None:
+                    progress(record)
+    return records
+
+
+def load_jsonl(path: Path) -> list[dict]:
+    with path.open(encoding="utf-8") as fh:
+        return [json.loads(line) for line in fh if line.strip()]

@@ -134,7 +134,7 @@ TRANSPARENT_ROLES = {
     "Pre",
 }
 DROPPED_ROLES = {"InlineTextBox", "LineBreak"}
-STATEFUL_PROPS = {"checked", "expanded", "pressed", "selected"}  # "false" is news for these
+STATEFUL_PROPS = {"checked", "expanded", "pressed"}  # "false" is news for these
 
 
 def _ax_line(node: AXNode, indent: int) -> str:

@@ -234,7 +234,8 @@ def _clickable(snap: dict[str, Any], stamps: dict[int, int]) -> set[int]:
 def capture(page: Page, cdp: CDPSession) -> Snapshot:
     walked = page.evaluate(_WALK_JS, list(EXCLUDED_IDS))
     utterance = page.evaluate(
-        "(() => { const u = core.getUtterance(); return typeof u === 'string' ? u : u.utterance; })()"
+        "(() => { const u = core.getUtterance();"
+        " return typeof u === 'string' ? u : u.utterance; })()"
     )
     document = cdp.send("DOM.getDocument", {"depth": -1})
     stamps, text_nodes = _backend_to_stamp(document)

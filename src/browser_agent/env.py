@@ -17,9 +17,15 @@ from dataclasses import dataclass
 from pathlib import Path
 from types import TracebackType
 
-from playwright.sync_api import Browser, BrowserContext, CDPSession, Page, Playwright
+from playwright.sync_api import (
+    Browser,
+    BrowserContext,
+    CDPSession,
+    Page,
+    Playwright,
+    sync_playwright,
+)
 from playwright.sync_api import Error as PlaywrightError
-from playwright.sync_api import sync_playwright
 
 from browser_agent.pages import install_routes, task_path, task_url
 from browser_agent.snapshot import Snapshot, capture

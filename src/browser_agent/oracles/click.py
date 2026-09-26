@@ -144,8 +144,8 @@ def click_tab(ctx: OracleContext) -> Iterator[Step]:
 def click_tab_2(ctx: OracleContext) -> Iterator[Step]:
     word = ctx.quoted()[-1]
     panel = ctx.js(
-        """w => [...document.querySelectorAll('#area > div[id^=tabs-]')]
-                .findIndex(p => [...p.querySelectorAll('.alink')].some(a => a.textContent === w))""",
+        """w => [...document.querySelectorAll('#area > div[id^=tabs-]')].findIndex(
+                p => [...p.querySelectorAll('.alink')].some(a => a.textContent === w))""",
         word,
     )
     if panel < 0:

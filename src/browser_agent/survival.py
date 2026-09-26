@@ -1,0 +1,77 @@
+"""Does an encoding still contain the element the oracle had to act on?
+
+Three nested checks, per (encoding, target):
+
+``present``       some fragment of the encoding represents the target or an element that
+                  activates it: its own subtree, or a ``<label>`` bound to it (HTML semantics:
+                  clicking or filling a label reaches its control).
+``identifiable``  present, and those fragments carry every string the instruction uses to pick
+                  the target out (its button text, the colour it is described by, the field
+                  name...). Case-insensitive, whitespace-collapsed, HTML entities decoded.
+``actionable``    present, and one of those fragments carries an index the action layer
+                  accepts. ``raw_html`` has no indices at all, so for it this reports whether a
+                  *short* selector exists (a unique ``#id``) as opposed to a structural path.
+
+"Identifiable" is strict: text sitting next to the element in the encoding does not count,
+because nothing in the encoding ties it to the element. An unlabelled ``<input>`` preceded by
+the word "Password" is present but not identifiable. A model may still guess right; the model
+arm measures whether it does.
+"""
+
+from __future__ import annotations
+
+import html
+from dataclasses import asdict, dataclass
+
+from browser_agent.encoders import Encoding
+from browser_agent.snapshot import Snapshot
+
+
+def normalise(text: str) -> str:
+    return " ".join(html.unescape(text).casefold().split())
+
+
+@dataclass(frozen=True)
+class TargetCheck:
+    present: bool
+    identifiable: bool
+    actionable: bool
+
+    def as_dict(self) -> dict[str, bool]:
+        return asdict(self)
+
+
+def activators(snap: Snapshot, target: int) -> set[int]:
+    """Stamps of elements whose activation reaches ``target``: its subtree and bound labels."""
+    out = {nid for nid in snap.nodes if snap.is_within(nid, target)}
+    node = snap.nodes[target]
+    parent = node.parent
+    while parent != -1:
+        if snap.nodes[parent].tag == "label":
+            out |= {nid for nid in snap.nodes if snap.is_within(nid, parent)}
+        parent = snap.nodes[parent].parent
+    own_id = node.attr("id")
+    if own_id:
+        for other in snap.nodes.values():
+            if other.tag == "label" and other.attr("for") == own_id:
+                out |= {nid for nid in snap.nodes if snap.is_within(nid, other.id)}
+    return out
+
+
+def unique_id_selector(snap: Snapshot, target: int) -> bool:
+    own_id = snap.nodes[target].attr("id")
+    return bool(own_id) and sum(1 for n in snap.nodes.values() if n.attr("id") == own_id) == 1
+
+
+def check(enc: Encoding, snap: Snapshot, target: int, needs: tuple[str, ...]) -> TargetCheck:
+    reach = activators(snap, target)
+    owned = [f for f in enc.fragments if f.owner in reach]
+    if not owned:
+        return TargetCheck(False, False, False)
+    blob = normalise(" ".join(f.text for f in owned))
+    identifiable = all(any(normalise(alt) in blob for alt in need.split("|")) for need in needs)
+    if enc.name == "raw_html":
+        actionable = unique_id_selector(snap, target)
+    else:
+        actionable = any(f.handle is not None for f in owned)
+    return TargetCheck(True, identifiable, actionable)

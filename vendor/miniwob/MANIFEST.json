@@ -1,0 +1,1097 @@
+{
+ "repo": "Farama-Foundation/miniwob-plusplus",
+ "commit": "33c3b4ddef8c6eb67c57a29663d844b1eda7e614",
+ "subtree": "miniwob/html (flight/ excluded)",
+ "files": [
+  {
+   "path": "common/shapes.js",
+   "sha": "d03304311ed478110fda63a74b86f094422aadea",
+   "size": 8752
+  },
+  {
+   "path": "common/special/book-flight/domestic.js",
+   "sha": "f564df8f48e4c17aa9738ba1c52c5b7785fd6709",
+   "size": 18174
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_0.png",
+   "sha": "d77244082067d3a5c45168a2b7fb63fe60426a72",
+   "size": 7177
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_1.png",
+   "sha": "d8d717065488ed08f18a7862d00d9137b7053f2e",
+   "size": 7031
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_2.png",
+   "sha": "d7d2519a5ee181e2f48185454a2b90f9f3948d80",
+   "size": 7065
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_3.png",
+   "sha": "161e3fb1c1351995e99f49bedf5aa78ea5486fca",
+   "size": 7095
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_4.png",
+   "sha": "8bc996c609d3f9d18ef2b6edb867ef486bceca3d",
+   "size": 7019
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_5.png",
+   "sha": "58d6b4957ce4b27ba0d466df809ee1d0ff963f0d",
+   "size": 7079
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_6.png",
+   "sha": "89e4135e708b8dcfd63cb856cad76878f78a8794",
+   "size": 7079
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_7.png",
+   "sha": "d9afd3bf68bb9de47761efc653afd6fc784583fb",
+   "size": 7052
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_8.png",
+   "sha": "5c664b63dc08426d1f0d3fff921c2c96bf5f5803",
+   "size": 7047
+  },
+  {
+   "path": "common/special/checkbox-numbers/ch_9.png",
+   "sha": "5a07eec58bcd287d6d2e64050cb76818a867f444",
+   "size": 7092
+  },
+  {
+   "path": "common/special/click-pie/raphael.icons.min.js",
+   "sha": "0b03a178b5a18790ddf20f5ee149c51722eb5776",
+   "size": 265643
+  },
+  {
+   "path": "common/special/click-pie/raphael.min.js",
+   "sha": "fbc1aba8547462f23e65c3acf8b534ee9a7c0f15",
+   "size": 91015
+  },
+  {
+   "path": "common/special/click-pie/wheelnav.min.js",
+   "sha": "e387d8d01ec9b1ef4faf7da12d587815fbda70e7",
+   "size": 79803
+  },
+  {
+   "path": "common/special/drag-cube/blank.png",
+   "sha": "052d219f6ec806c5195f0fd2bb4648c9aefb9e53",
+   "size": 52210
+  },
+  {
+   "path": "common/special/drag-cube/cube.css",
+   "sha": "1948261d4e5859708ece4729dce66a02734b1122",
+   "size": 3984
+  },
+  {
+   "path": "common/special/drag-cube/cube.js",
+   "sha": "c1715f1cdd10856ad901c4373e7bc53b7b70a1e1",
+   "size": 10003
+  },
+  {
+   "path": "common/special/dropdown/jquery.selectric.js",
+   "sha": "e500fda1dd4a5340cb991b98f58f2eb0bd1c523c",
+   "size": 35085
+  },
+  {
+   "path": "common/special/dropdown/selectric.css",
+   "sha": "4f0d022d1ddb0a5434a852803d5122b8cb73b798",
+   "size": 4278
+  },
+  {
+   "path": "common/special/email-inbox-nl/templates.js",
+   "sha": "c871856aa6948f234171fb9f2cc8e2d5fcbe108f",
+   "size": 26443
+  },
+  {
+   "path": "common/special/email-inbox/delete.png",
+   "sha": "ddf909afd706ce98f37b3c1ab000c0cfd943a993",
+   "size": 1713
+  },
+  {
+   "path": "common/special/email-inbox/email-inbox.css",
+   "sha": "1f672170ff5446112276dc85ed5029cfc78dfcac",
+   "size": 4697
+  },
+  {
+   "path": "common/special/email-inbox/forward.png",
+   "sha": "f310b63d0c0bb7318b11834bb7abea12d52fd510",
+   "size": 622
+  },
+  {
+   "path": "common/special/email-inbox/left-arrow-white.png",
+   "sha": "966d968ac69678536d3365a9dbb180947941028a",
+   "size": 479
+  },
+  {
+   "path": "common/special/email-inbox/left-arrow.png",
+   "sha": "9c16b9b9ebf78ab8c944c52fd7d337d859ad5ebf",
+   "size": 693
+  },
+  {
+   "path": "common/special/email-inbox/reply.png",
+   "sha": "48183ebd24d35cbf07e4a9d566f6cb81f343eb18",
+   "size": 1137
+  },
+  {
+   "path": "common/special/email-inbox/search.png",
+   "sha": "e5386cfff01c47651d92b5653d0e4b9abe3d03df",
+   "size": 1183
+  },
+  {
+   "path": "common/special/email-inbox/send.png",
+   "sha": "d8d87e35271ff67c77338b732f1a683e54f95683",
+   "size": 772
+  },
+  {
+   "path": "common/special/email-inbox/star-clicked.png",
+   "sha": "f28d87bef62f6f952c453e57acf92a052a3142d2",
+   "size": 1116
+  },
+  {
+   "path": "common/special/email-inbox/star.png",
+   "sha": "4d7668efa654751a33fe5f199ea5fe1f43d8048f",
+   "size": 1760
+  },
+  {
+   "path": "common/special/navigate-tree/images/ajax-loader.gif",
+   "sha": "26d356f3450863bf3168d6179f20c777b5869d70",
+   "size": 649
+  },
+  {
+   "path": "common/special/navigate-tree/images/file.gif",
+   "sha": "d1a7d325bb06b87abad107285151b88360196d12",
+   "size": 109
+  },
+  {
+   "path": "common/special/navigate-tree/images/folder-closed.gif",
+   "sha": "9bcf213cc3ee019a911229316914e7396c1341e8",
+   "size": 102
+  },
+  {
+   "path": "common/special/navigate-tree/images/folder.gif",
+   "sha": "2b31631ca2bfec3a8afb1bfdd4f8ed4c5bcc3a18",
+   "size": 106
+  },
+  {
+   "path": "common/special/navigate-tree/images/minus.gif",
+   "sha": "b15d7e102bec2ee560d5973b604ec0a9ed8cfd8d",
+   "size": 58
+  },
+  {
+   "path": "common/special/navigate-tree/images/plus.gif",
+   "sha": "c1222e9a1fc5607162bd7913302109f97388f13b",
+   "size": 61
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-black-line.gif",
+   "sha": "03cb5d7f4db030d27e38e1c29da79e49b6974b76",
+   "size": 1010
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-black.gif",
+   "sha": "fa277e648debde8b31aa10a891f0772c1cfa8408",
+   "size": 381
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-default-line.gif",
+   "sha": "e88b0d4d61f4365c8f6b516b15882e90ef10b1fd",
+   "size": 848
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-default.gif",
+   "sha": "a3387e728a669700b1cc9878a2ee8e9ccf61a97c",
+   "size": 387
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-famfamfam-line.gif",
+   "sha": "c5073147f92cab113063ab3c92a17456694304e8",
+   "size": 37
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-famfamfam.gif",
+   "sha": "c568d36eaa8595968792893ac7a24182889c2bd4",
+   "size": 545
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-gray-line.gif",
+   "sha": "170382cd94f66273625d0a261f6031c1b7bd5442",
+   "size": 1010
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-gray.gif",
+   "sha": "222c3692221f9a18f9a351ad866943df4a2a9056",
+   "size": 394
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-red-line.gif",
+   "sha": "8602e2d981d62149ff675cc0b77dc95bcc42cb12",
+   "size": 1010
+  },
+  {
+   "path": "common/special/navigate-tree/images/treeview-red.gif",
+   "sha": "68fc9f1c7af7bdcd3c47fbf4df33a9cda9f66cc8",
+   "size": 394
+  },
+  {
+   "path": "common/special/navigate-tree/jquery.treeview.css",
+   "sha": "022c51322c5118c05560b656d71d6dff41f9c6b0",
+   "size": 2590
+  },
+  {
+   "path": "common/special/navigate-tree/jquery.treeview.min.js",
+   "sha": "96202d9cb953b1a32816c2aa5d6c3fa2747aef8c",
+   "size": 5433
+  },
+  {
+   "path": "common/special/order-food/dairy.png",
+   "sha": "08b5484968d8011a6d7b247523356436183edbb0",
+   "size": 1445
+  },
+  {
+   "path": "common/special/order-food/gluten-free.png",
+   "sha": "d29062c4572fa00a350f8231c80fc89eaa43ce69",
+   "size": 2796
+  },
+  {
+   "path": "common/special/order-food/meat.png",
+   "sha": "6688215217d4f68121629926385a8d77ce53feeb",
+   "size": 2718
+  },
+  {
+   "path": "common/special/order-food/peanuts.png",
+   "sha": "16f71e1b991273a5a1190f4e2c35f24fdf2965ba",
+   "size": 1749
+  },
+  {
+   "path": "common/special/order-food/vegan.png",
+   "sha": "aaec1335a32fa8d61c6058ab64607f31bafaa551",
+   "size": 2644
+  },
+  {
+   "path": "common/special/search-engine/jquery.twbsPagination.min.js",
+   "sha": "8ad0ed1129235a0d939f9d7ad7b9a728a98a2922",
+   "size": 6215
+  },
+  {
+   "path": "common/special/social-media/like-hover.png",
+   "sha": "35afcca0d9e653056cb26a1081bf337d8ac36814",
+   "size": 1424
+  },
+  {
+   "path": "common/special/social-media/like.png",
+   "sha": "6b548c358a3c898bff52c055b3ebbb7cbcd09548",
+   "size": 1307
+  },
+  {
+   "path": "common/special/social-media/more-hover.png",
+   "sha": "dea7d186cacb4570c2e283c87eb5cc85740ffa8c",
+   "size": 695
+  },
+  {
+   "path": "common/special/social-media/more.png",
+   "sha": "764e0ce3e97dfd5fd88390014bdc0d5868104127",
+   "size": 850
+  },
+  {
+   "path": "common/special/social-media/reply-hover.png",
+   "sha": "e73751332c19cdd475acefbdeff245553c41dec7",
+   "size": 1235
+  },
+  {
+   "path": "common/special/social-media/reply.png",
+   "sha": "40a525c5c6997cc165026420426a96d6a3810fec",
+   "size": 1094
+  },
+  {
+   "path": "common/special/social-media/retweet-hover.png",
+   "sha": "9f4d16ce353aba775572b75eb91aa463f3ba0975",
+   "size": 991
+  },
+  {
+   "path": "common/special/social-media/retweet.png",
+   "sha": "a227bd188dff9c50ca71703e959b527b4fdbc17d",
+   "size": 1069
+  },
+  {
+   "path": "common/special/social-media/share-hover.png",
+   "sha": "0a6db26aad11e69c9e70cc341ffd396c59939549",
+   "size": 1508
+  },
+  {
+   "path": "common/special/social-media/share.png",
+   "sha": "02b8e9f9642f81f616e154473bd6d736c8def07c",
+   "size": 1475
+  },
+  {
+   "path": "common/special/text-editor/quill.min.js",
+   "sha": "f8f0716e31c91296099af1728524b7110ed06d98",
+   "size": 199320
+  },
+  {
+   "path": "common/special/text-editor/quill.snow.css",
+   "sha": "34ef5f122959687aa674cf9da267d03a5ff3fac4",
+   "size": 22636
+  },
+  {
+   "path": "common/special/tic-tac-toe/o.png",
+   "sha": "259a8a7404c3705f87496861df51601886193303",
+   "size": 2803
+  },
+  {
+   "path": "common/special/tic-tac-toe/x.png",
+   "sha": "d6a3263be56ba94cc2b3f855ae7d8f3032209e32",
+   "size": 993
+  },
+  {
+   "path": "common/ui_utils.js",
+   "sha": "a0ae438baf601f87525c84e998a9de96364c4079",
+   "size": 78175
+  },
+  {
+   "path": "core/core.css",
+   "sha": "e5cfe33f6dbbbc580d6cdf3b1f4bb7755c74acfa",
+   "size": 1582
+  },
+  {
+   "path": "core/core.js",
+   "sha": "08f57ffa652a44a20ac4fe0953c171dfcf0fcef7",
+   "size": 22274
+  },
+  {
+   "path": "core/d3.v3.min.js",
+   "sha": "ca05c719a789e0d889d923ac73381b46d5ed0144",
+   "size": 151665
+  },
+  {
+   "path": "core/d3.v4.min.js",
+   "sha": "b880cbd943b3a53e7772ea2ff79a23dd84d1a263",
+   "size": 214204
+  },
+  {
+   "path": "core/jquery-ui-hacks.js",
+   "sha": "f5e3c1702d07d6ba40378eebb6b07f9187fdb45a",
+   "size": 337
+  },
+  {
+   "path": "core/jquery-ui/external/jquery/jquery.js",
+   "sha": "7fc60fca78b6201f814da4b2906cae2b69ee9610",
+   "size": 293430
+  },
+  {
+   "path": "core/jquery-ui/images/ui-icons_444444_256x240.png",
+   "sha": "c2daae1663d47f397a01fd4166bce9b6b9ac4183",
+   "size": 7006
+  },
+  {
+   "path": "core/jquery-ui/images/ui-icons_555555_256x240.png",
+   "sha": "47849283f84f7026932bf50282ee8af51444c26e",
+   "size": 7074
+  },
+  {
+   "path": "core/jquery-ui/images/ui-icons_777620_256x240.png",
+   "sha": "d2f58d25581c605a5538fa50408fe09c4a30740d",
+   "size": 4676
+  },
+  {
+   "path": "core/jquery-ui/images/ui-icons_777777_256x240.png",
+   "sha": "1d532588b989c5fd03e7a63f7e829b017c35d3cf",
+   "size": 7013
+  },
+  {
+   "path": "core/jquery-ui/images/ui-icons_cc0000_256x240.png",
+   "sha": "2825f2004d10b413a76317d47384e6139abcbe00",
+   "size": 4632
+  },
+  {
+   "path": "core/jquery-ui/images/ui-icons_ffffff_256x240.png",
+   "sha": "136a4f97bd2e204943789c1ba9ac9bf0e997ff81",
+   "size": 6313
+  },
+  {
+   "path": "core/jquery-ui/jquery-ui.min.css",
+   "sha": "776e2595ad336c9b7fafe5358c0898f183f05f4d",
+   "size": 32076
+  },
+  {
+   "path": "core/jquery-ui/jquery-ui.min.js",
+   "sha": "25398a167415050ae8bfb0bfebac6aa3ab790909",
+   "size": 253669
+  },
+  {
+   "path": "core/jquery-ui/jquery-ui.structure.min.css",
+   "sha": "1e80c4db1501f8a157f3d8f395b279a7580f699f",
+   "size": 15548
+  },
+  {
+   "path": "core/jquery-ui/jquery-ui.theme.min.css",
+   "sha": "d2d4f6a11a11a2af9c9d759fb3329e6a23b6c453",
+   "size": 13849
+  },
+  {
+   "path": "core/jscolor.min.js",
+   "sha": "2a7a788bed2fda91ae401976506de52681d3def9",
+   "size": 29139
+  },
+  {
+   "path": "core/record.js",
+   "sha": "7149c542e573997c0906ba66f25da909e3d3b311",
+   "size": 5937
+  },
+  {
+   "path": "miniwob/ascending-numbers.html",
+   "sha": "5398231ab28982bbe2e0869b4f1bf3e37a8a2b88",
+   "size": 3404
+  },
+  {
+   "path": "miniwob/bisect-angle.html",
+   "sha": "4b91b6389441c9300ea5792e7038542b90638855",
+   "size": 5412
+  },
+  {
+   "path": "miniwob/book-flight-nodelay.html",
+   "sha": "06513896e24bdda22381891ee2c85c194e83e240",
+   "size": 12789
+  },
+  {
+   "path": "miniwob/book-flight.html",
+   "sha": "8fbc4839af0223c90377c4bcaad16b2ebb9db39d",
+   "size": 12757
+  },
+  {
+   "path": "miniwob/button-delay.html",
+   "sha": "8ae4fef2d961ef6c66c8dd5bcad632d424d6213c",
+   "size": 2414
+  },
+  {
+   "path": "miniwob/buy-ticket.html",
+   "sha": "38154d6134880ba4ea92de95946d783149071c33",
+   "size": 7900
+  },
+  {
+   "path": "miniwob/chase-circle.html",
+   "sha": "22fe77e09428f536e6a925621c62c1a0a8438d52",
+   "size": 2367
+  },
+  {
+   "path": "miniwob/choose-date-easy.html",
+   "sha": "c623c01b80b7bd2d51a8f804812e5fdf6066111e",
+   "size": 1662
+  },
+  {
+   "path": "miniwob/choose-date-medium.html",
+   "sha": "6d54db22cf2ed5d2183349c2104f442a9c618e04",
+   "size": 1662
+  },
+  {
+   "path": "miniwob/choose-date-nodelay.html",
+   "sha": "e625452e745dd0034c4ea9ba9801b8464b98357b",
+   "size": 1718
+  },
+  {
+   "path": "miniwob/choose-date.html",
+   "sha": "2194b35597c50fd5af9701bf9b64a6629c27223f",
+   "size": 1660
+  },
+  {
+   "path": "miniwob/choose-list.html",
+   "sha": "654715e9a518b4aebcbe59d81b6be8c90982f157",
+   "size": 1540
+  },
+  {
+   "path": "miniwob/circle-center.html",
+   "sha": "9263c7b94449f4d985ddf04459b82c09e02dc994",
+   "size": 2981
+  },
+  {
+   "path": "miniwob/click-button-sequence.html",
+   "sha": "1166e267b5e59761f45a3125f1f5d043491a60db",
+   "size": 1471
+  },
+  {
+   "path": "miniwob/click-button.html",
+   "sha": "e119ef646711296125a9c86003399fb04fcf1eaa",
+   "size": 2103
+  },
+  {
+   "path": "miniwob/click-checkboxes-large.html",
+   "sha": "1f1bc5b54b5b3c98379ab670ea85303031fe5ed0",
+   "size": 2568
+  },
+  {
+   "path": "miniwob/click-checkboxes-soft.html",
+   "sha": "ff2284211c56643b60091670d0eba1569796018a",
+   "size": 4027
+  },
+  {
+   "path": "miniwob/click-checkboxes-transfer.html",
+   "sha": "3011680a7540a31897835e2cad4b08c94f90f35c",
+   "size": 2380
+  },
+  {
+   "path": "miniwob/click-checkboxes.html",
+   "sha": "84d3f10c2d285195ea69ec8e6055ba383a70dc9c",
+   "size": 1973
+  },
+  {
+   "path": "miniwob/click-collapsible-2-nodelay.html",
+   "sha": "315872e68abb4d3aed5e8e76e85fc7b8c00dfbb9",
+   "size": 2546
+  },
+  {
+   "path": "miniwob/click-collapsible-2.html",
+   "sha": "94d1d40b261fe757d888dfd5b29ae534fa5f4c5a",
+   "size": 2530
+  },
+  {
+   "path": "miniwob/click-collapsible-nodelay.html",
+   "sha": "f2b16a73221ed1c0a1de1cf425d702cc6ef70da0",
+   "size": 1993
+  },
+  {
+   "path": "miniwob/click-collapsible.html",
+   "sha": "f881fe55c9c496d0c175d1e78d14803d5d8f1814",
+   "size": 1977
+  },
+  {
+   "path": "miniwob/click-color.html",
+   "sha": "acfb34346ea74d24a80e018a29290e8d077a5da5",
+   "size": 3024
+  },
+  {
+   "path": "miniwob/click-dialog-2.html",
+   "sha": "c7587d3b31fbfb4bb52c9f967a409e344f95edaf",
+   "size": 2492
+  },
+  {
+   "path": "miniwob/click-dialog.html",
+   "sha": "dcb75211b7119fff7923b880cad9a68de1e049b2",
+   "size": 1890
+  },
+  {
+   "path": "miniwob/click-link.html",
+   "sha": "05405c4504e0c453e63e3e516763d29eb506c963",
+   "size": 2036
+  },
+  {
+   "path": "miniwob/click-menu-2.html",
+   "sha": "782fbddfbf1cf41f93e737e6fa7a121b0ed7024f",
+   "size": 3039
+  },
+  {
+   "path": "miniwob/click-menu.html",
+   "sha": "f343f795fa3958d4468946b5121b5b56d8675351",
+   "size": 1979
+  },
+  {
+   "path": "miniwob/click-option.html",
+   "sha": "bd00c5c2c88883178b4f5e1fd01bf18a3df7254c",
+   "size": 1656
+  },
+  {
+   "path": "miniwob/click-pie-nodelay.html",
+   "sha": "ae9a83fac05e313dd992fb41b2ed2bf63145f356",
+   "size": 3273
+  },
+  {
+   "path": "miniwob/click-pie.html",
+   "sha": "f137b25b11624c396b853b17ab932c9e87746037",
+   "size": 3214
+  },
+  {
+   "path": "miniwob/click-scroll-list.html",
+   "sha": "9807acdb22eec3c16d39528910557ada3703c7ca",
+   "size": 2482
+  },
+  {
+   "path": "miniwob/click-shades.html",
+   "sha": "c0ad892667ebe7286471a759fcf3cc2f2ee280a1",
+   "size": 3501
+  },
+  {
+   "path": "miniwob/click-shape.html",
+   "sha": "ecf85e6f30ca32a1b0f7a98ab67dd9f8306c1127",
+   "size": 1716
+  },
+  {
+   "path": "miniwob/click-tab-2-easy.html",
+   "sha": "81ba5814c9506b7678fa7d47c2ccfcff2bc276f4",
+   "size": 2897
+  },
+  {
+   "path": "miniwob/click-tab-2-hard.html",
+   "sha": "391aa15af8174d3d0c86d108adaed7e42e146b8b",
+   "size": 3023
+  },
+  {
+   "path": "miniwob/click-tab-2-medium.html",
+   "sha": "4e5b629c83828260b78adb38ba500520437458ce",
+   "size": 3351
+  },
+  {
+   "path": "miniwob/click-tab-2.html",
+   "sha": "170de5f2d09c1805ac19c3d20e660f2ab87ac33d",
+   "size": 2977
+  },
+  {
+   "path": "miniwob/click-tab.html",
+   "sha": "cdc10cb013cc25ffaeb245f8a6e30c51a88fffbe",
+   "size": 2260
+  },
+  {
+   "path": "miniwob/click-test-2.html",
+   "sha": "0478b9ecd1e8fe2848ca922570e0d60458e79f2a",
+   "size": 1151
+  },
+  {
+   "path": "miniwob/click-test-transfer.html",
+   "sha": "14ced8293537ef0e4a17b280494a28db42864912",
+   "size": 1401
+  },
+  {
+   "path": "miniwob/click-test.html",
+   "sha": "ee51c74c22ead57ad82662fbdb7b0c957c9b8d4c",
+   "size": 919
+  },
+  {
+   "path": "miniwob/click-widget.html",
+   "sha": "88f35d0e692147032321aca1c49f05de9456c3b1",
+   "size": 2299
+  },
+  {
+   "path": "miniwob/copy-paste-2.html",
+   "sha": "215f416ac135c8a2e6a0ff5664273cd0970decb4",
+   "size": 2753
+  },
+  {
+   "path": "miniwob/copy-paste.html",
+   "sha": "4f4ee975301af62a529f5e0c03e850acb4116b6d",
+   "size": 2324
+  },
+  {
+   "path": "miniwob/count-shape.html",
+   "sha": "c1a4dda17f1b0e32d6d3a322ef4b30982fffcb0a",
+   "size": 2791
+  },
+  {
+   "path": "miniwob/count-sides.html",
+   "sha": "6dcc7f8d5a548129578dcdf9a46e4b03f103c1b4",
+   "size": 2499
+  },
+  {
+   "path": "miniwob/daily-calendar.html",
+   "sha": "452599e95732d4aa2dc5dabdcb558a4f87c98dc0",
+   "size": 11372
+  },
+  {
+   "path": "miniwob/drag-box.html",
+   "sha": "a51cb4b7755058728262a25f130bac90d82173fb",
+   "size": 2739
+  },
+  {
+   "path": "miniwob/drag-circle.html",
+   "sha": "d58e4f80cf69c1886d2b52af6883730b88dd16a7",
+   "size": 2441
+  },
+  {
+   "path": "miniwob/drag-cube.html",
+   "sha": "4bd0ade855fa541b5127e8e83489f77d8725ca42",
+   "size": 2134
+  },
+  {
+   "path": "miniwob/drag-items-grid.html",
+   "sha": "a562099f3e375cc86219ef2db5a50b5a9a91266e",
+   "size": 2932
+  },
+  {
+   "path": "miniwob/drag-items.html",
+   "sha": "95dd7d015e2dc17d0e5afcf91309e3b49a9be2f1",
+   "size": 2731
+  },
+  {
+   "path": "miniwob/drag-shapes-2.html",
+   "sha": "e2195a1b90603ae08811c066ae7b535a8e28d272",
+   "size": 7130
+  },
+  {
+   "path": "miniwob/drag-shapes.html",
+   "sha": "070a88ed46b78fe90ee5e3e98f4916cc02bd6b6f",
+   "size": 4711
+  },
+  {
+   "path": "miniwob/drag-single-shape.html",
+   "sha": "4d370e09a655aec28f492588cc3ab6fc4bdc16f3",
+   "size": 4072
+  },
+  {
+   "path": "miniwob/drag-sort-numbers.html",
+   "sha": "8bf5709b791d8aba9c1b969e92ec9f70584f0631",
+   "size": 2518
+  },
+  {
+   "path": "miniwob/draw-circle.html",
+   "sha": "c502ba78dd88c4128a93f7ea3be9da792258259c",
+   "size": 5455
+  },
+  {
+   "path": "miniwob/draw-line.html",
+   "sha": "eb9352bed52420a44547cebea1f0b5c0eb6adf63",
+   "size": 6587
+  },
+  {
+   "path": "miniwob/email-inbox-delete.html",
+   "sha": "454263adf770695487757fab4318abc0ff7017b8",
+   "size": 18037
+  },
+  {
+   "path": "miniwob/email-inbox-forward-nl-turk.html",
+   "sha": "5f5f230a5a657303d1dcea592f395abb1e684919",
+   "size": 18042
+  },
+  {
+   "path": "miniwob/email-inbox-forward-nl.html",
+   "sha": "d6ecc0b3b0e5077ad328b65c2ba694303fb9d9c1",
+   "size": 19502
+  },
+  {
+   "path": "miniwob/email-inbox-forward.html",
+   "sha": "44a49631bd80eec8db9c9c245dda2cd3d8d51a3b",
+   "size": 18038
+  },
+  {
+   "path": "miniwob/email-inbox-important.html",
+   "sha": "d09f61e2bc04f49f09dc204cbd3ecd2b3d55133b",
+   "size": 18040
+  },
+  {
+   "path": "miniwob/email-inbox-nl-turk.html",
+   "sha": "0be64f52d57eab1759769ccc0be948d73db7e55f",
+   "size": 18910
+  },
+  {
+   "path": "miniwob/email-inbox-noscroll.html",
+   "sha": "ff918de28ea4036a62b6083f9059dcfa178447a5",
+   "size": 18070
+  },
+  {
+   "path": "miniwob/email-inbox-reply.html",
+   "sha": "8449ab3a7e17844528a1ec5dd5d40cd923b26a98",
+   "size": 18036
+  },
+  {
+   "path": "miniwob/email-inbox-star-reply.html",
+   "sha": "4737f57dfe8ab57949b638b080d7aa52dffa7585",
+   "size": 18049
+  },
+  {
+   "path": "miniwob/email-inbox.html",
+   "sha": "c25ce009bdaf4c3062f0599cc5c6e1b60f9e59d0",
+   "size": 18071
+  },
+  {
+   "path": "miniwob/enter-date.html",
+   "sha": "ed11dcf028720ad82678b0c2d4535c086bc271a0",
+   "size": 1573
+  },
+  {
+   "path": "miniwob/enter-password.html",
+   "sha": "cee913a259a13815fb7f40fb9ad20ed6ffd3414a",
+   "size": 1434
+  },
+  {
+   "path": "miniwob/enter-text-2.html",
+   "sha": "e3330cd69659d2d183975dd7f7a9f25aa2e023fb",
+   "size": 1962
+  },
+  {
+   "path": "miniwob/enter-text-dynamic.html",
+   "sha": "843941869d08a63368dca7d0b69a6ca5cc264e16",
+   "size": 1364
+  },
+  {
+   "path": "miniwob/enter-text.html",
+   "sha": "f2821adad6284bc853f680920691c0034bbb2611",
+   "size": 1396
+  },
+  {
+   "path": "miniwob/enter-time.html",
+   "sha": "fcf8ba05dedd6526c3d78d5a63beb6aaf0723ec1",
+   "size": 1604
+  },
+  {
+   "path": "miniwob/find-greatest.html",
+   "sha": "5310ca1e92156193cf59cd52f5e52570dd5e6c66",
+   "size": 3098
+  },
+  {
+   "path": "miniwob/find-midpoint.html",
+   "sha": "a3e37a4b71a0b9813c05defbca9d60840d98d8b0",
+   "size": 4716
+  },
+  {
+   "path": "miniwob/find-word.html",
+   "sha": "67191c7d5c09dc31a607118387f7c58bea215fce",
+   "size": 2422
+  },
+  {
+   "path": "miniwob/focus-text-2.html",
+   "sha": "2de44a8e09dbba7191ce13559c16871f80c19939",
+   "size": 1432
+  },
+  {
+   "path": "miniwob/focus-text.html",
+   "sha": "d60cc6b414b6f285e32c0e2285f250085ce387cc",
+   "size": 1059
+  },
+  {
+   "path": "miniwob/form-sequence-2.html",
+   "sha": "0b217e56732114d56f2c40d614489f1bc3c15b05",
+   "size": 2273
+  },
+  {
+   "path": "miniwob/form-sequence-3.html",
+   "sha": "340dca95b6a0858e8327365b1d373f79ea315088",
+   "size": 2618
+  },
+  {
+   "path": "miniwob/form-sequence.html",
+   "sha": "1685a8682cd187c873c5459974fe924ac2d4d629",
+   "size": 2530
+  },
+  {
+   "path": "miniwob/generate-number.html",
+   "sha": "5ea47c5f6e4e925d68c6dd4b0546ab44c4009a2f",
+   "size": 2594
+  },
+  {
+   "path": "miniwob/grid-coordinate.html",
+   "sha": "149deea6870386df383c3038dc2b4f51aa7173da",
+   "size": 3339
+  },
+  {
+   "path": "miniwob/guess-number.html",
+   "sha": "0a64e252e3e6648f36ad4a2765ff1eb1cf0e71d0",
+   "size": 2132
+  },
+  {
+   "path": "miniwob/highlight-text-2.html",
+   "sha": "8f192b1650bd313a781f88bda00f58a4177fca4d",
+   "size": 2398
+  },
+  {
+   "path": "miniwob/highlight-text.html",
+   "sha": "fb20a879b23b50e5a417bd5b5642198cfb94bf2a",
+   "size": 2066
+  },
+  {
+   "path": "miniwob/hot-cold.html",
+   "sha": "1939f3e2421574b64a97edfa30329410ab0f5b9e",
+   "size": 2502
+  },
+  {
+   "path": "miniwob/hover-shape.html",
+   "sha": "7e06b53bcc2f3af260a9b7198f37606a149c7f50",
+   "size": 4159
+  },
+  {
+   "path": "miniwob/identify-shape.html",
+   "sha": "1a98674e7a04a139725b2102abfda73ea75c4ed1",
+   "size": 2672
+  },
+  {
+   "path": "miniwob/login-user-popup.html",
+   "sha": "75c0a7e1214b45a44cd2f30ef9c3ed21bc1628f9",
+   "size": 3651
+  },
+  {
+   "path": "miniwob/login-user.html",
+   "sha": "2261a52b40cc76dc366efac1206a9606411f0c96",
+   "size": 1495
+  },
+  {
+   "path": "miniwob/moving-items.html",
+   "sha": "536265f288b8821c083cf9c532e7f4f9d1343883",
+   "size": 3958
+  },
+  {
+   "path": "miniwob/multi-layouts.html",
+   "sha": "4017964ad1c4b330355eeee907802955d45e1b92",
+   "size": 7037
+  },
+  {
+   "path": "miniwob/multi-orderings.html",
+   "sha": "51136afed7d9016825ac804dfcaeca924e80f3b9",
+   "size": 2600
+  },
+  {
+   "path": "miniwob/navigate-tree.html",
+   "sha": "dfca9f3ed3f9d6fcd1ce9820b44e79c7e920ac12",
+   "size": 3016
+  },
+  {
+   "path": "miniwob/number-checkboxes.html",
+   "sha": "f51f4853600ad009687d69dfe2bd48cae3df4c85",
+   "size": 4817
+  },
+  {
+   "path": "miniwob/odd-or-even.html",
+   "sha": "9e152650a49bb3bedbd801ebdc440d8d8fa2db28",
+   "size": 2951
+  },
+  {
+   "path": "miniwob/order-food.html",
+   "sha": "4fff77fbee613f610fa8b6c10b64be39d32c971b",
+   "size": 8125
+  },
+  {
+   "path": "miniwob/phone-book.html",
+   "sha": "5a421ca316f5aa42a62b8ebcbc7ef0e5839d3904",
+   "size": 6157
+  },
+  {
+   "path": "miniwob/read-table-2.html",
+   "sha": "31a5abd947a07c398a370c6685c279858cb62e4f",
+   "size": 4061
+  },
+  {
+   "path": "miniwob/read-table.html",
+   "sha": "cc4071bcf6552bdc8471e0f16d374bf5106a43c7",
+   "size": 2521
+  },
+  {
+   "path": "miniwob/resize-textarea.html",
+   "sha": "4747e5a6dbf0e96bbbf457f0243d44f5c1ac18b8",
+   "size": 2882
+  },
+  {
+   "path": "miniwob/right-angle.html",
+   "sha": "bb353984fe7fec139677de76f1108b3967d3b5c5",
+   "size": 5406
+  },
+  {
+   "path": "miniwob/scroll-text-2.html",
+   "sha": "15511b2270cb74c16b57fd70ded2d66500f2c87d",
+   "size": 2143
+  },
+  {
+   "path": "miniwob/scroll-text.html",
+   "sha": "24541279780d4eb52d0a1d952babc60dc99d775b",
+   "size": 1583
+  },
+  {
+   "path": "miniwob/search-engine.html",
+   "sha": "513170a64c08a290e89f29927fb97de6cd36e787",
+   "size": 5275
+  },
+  {
+   "path": "miniwob/sign-agreement.html",
+   "sha": "944143699a4a7b9b03e1ee9d174f135f1557feae",
+   "size": 2955
+  },
+  {
+   "path": "miniwob/simon-says.html",
+   "sha": "e1f5527fb097d32925bbfe87aee05205362a6496",
+   "size": 2559
+  },
+  {
+   "path": "miniwob/simple-algebra.html",
+   "sha": "21e2bb7c5cb2da47da1440257aedd0c1823d076d",
+   "size": 2294
+  },
+  {
+   "path": "miniwob/simple-arithmetic.html",
+   "sha": "afaee99b2823b6ec57ebe53c07c43b24f6e8d8c8",
+   "size": 2046
+  },
+  {
+   "path": "miniwob/social-media-all.html",
+   "sha": "05b1ea9d0e957fc9669d2e7940eb743c0d7d2275",
+   "size": 5864
+  },
+  {
+   "path": "miniwob/social-media-some.html",
+   "sha": "6297bde5476022f3b9aa87e04a1717f0260443df",
+   "size": 6183
+  },
+  {
+   "path": "miniwob/social-media.html",
+   "sha": "a25211632eaa5e9d92354f04bf8acf39068378d2",
+   "size": 5974
+  },
+  {
+   "path": "miniwob/stock-market.html",
+   "sha": "2ca9ab60446119d7225a910f4202686161f16dc1",
+   "size": 3389
+  },
+  {
+   "path": "miniwob/terminal.html",
+   "sha": "4e5087cccde52a3f9e55b4fb366268d54114f503",
+   "size": 8471
+  },
+  {
+   "path": "miniwob/text-editor.html",
+   "sha": "1e8596ea273c3360dd64f3b88e7ea4eed88255c5",
+   "size": 6360
+  },
+  {
+   "path": "miniwob/text-transform.html",
+   "sha": "4efffdbebda9e3b138465e882917c1940c32e32c",
+   "size": 2202
+  },
+  {
+   "path": "miniwob/tic-tac-toe.html",
+   "sha": "24d082bcbee7250a20e42aedb822d681b471bb70",
+   "size": 8234
+  },
+  {
+   "path": "miniwob/unicode-test.html",
+   "sha": "146fdcb3ab52f7f8a7d7c23db2118011728d7e7a",
+   "size": 2205
+  },
+  {
+   "path": "miniwob/use-autocomplete-nodelay.html",
+   "sha": "653b72671b013d1e87cc51d2b80285ba5ae791bc",
+   "size": 2289
+  },
+  {
+   "path": "miniwob/use-autocomplete.html",
+   "sha": "8293aeda26947a4af16147957520285f12571927",
+   "size": 2252
+  },
+  {
+   "path": "miniwob/use-colorwheel-2.html",
+   "sha": "fd841bdf16124376759ec143aeff391d592f0a76",
+   "size": 1909
+  },
+  {
+   "path": "miniwob/use-colorwheel.html",
+   "sha": "2294c3b715719b9a8e2c7ca2aea453f584e8de95",
+   "size": 1749
+  },
+  {
+   "path": "miniwob/use-slider-2.html",
+   "sha": "c356dd71dba8d5da15f84e37096a6e95450a4e0f",
+   "size": 2826
+  },
+  {
+   "path": "miniwob/use-slider.html",
+   "sha": "07ad6f41c60ea28b0a704ad5d9f238e17f2f0779",
+   "size": 2141
+  },
+  {
+   "path": "miniwob/use-spinner.html",
+   "sha": "8817f023e7012603767cc2223c6141702f8ee1a1",
+   "size": 1690
+  },
+  {
+   "path": "miniwob/visual-addition.html",
+   "sha": "c4ce2ed7d779f573ae68f4f9b1f6005270e76727",
+   "size": 2535
+  }
+ ]
+}

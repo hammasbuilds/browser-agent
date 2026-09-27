@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="python">
   <img src="https://img.shields.io/badge/browser-Playwright%20Chromium-informational" alt="browser">
   <img src="https://img.shields.io/badge/benchmark-MiniWoB%2B%2B%20(101%20tasks)-success" alt="benchmark">
-  <img src="https://img.shields.io/badge/tests-94%20passing-success" alt="tests">
+  <img src="https://img.shields.io/badge/tests-95%20passing-success" alt="tests">
   <img src="https://img.shields.io/badge/model%20arm-queued-lightgrey" alt="model arm">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
 </p>
@@ -294,7 +294,7 @@ cd browser-agent
 uv sync
 uv run playwright install chromium      # skip if Playwright's Chromium is already installed
 
-uv run pytest -q                        # 94 tests, no network, no model
+uv run pytest -q                        # 95 tests, no network, no model
 uv run python demo.py                   # four pages, seven encodings, known answers
 uv run browser-agent tasks              # the 101 runnable tasks and the 29 left out, with reasons
 uv run browser-agent show click-color --seed 0
@@ -343,7 +343,7 @@ which needs Ollama serving `qwen2.5:14b-instruct` and roughly 12 GB of free VRAM
 uv run pytest -q
 ```
 
-94 tests. The encoder and survival tests run on snapshots saved from real task pages
+95 tests. The encoder and survival tests run on snapshots saved from real task pages
 (`tests/fixtures/`), so they need no browser. The browser tests (`-m browser`) drive real
 Chromium: seeded resets are deterministic, a wrong click gets the benchmark's negative reward,
 the executor refuses indices the agent was not shown, pages cannot reach the network, and the

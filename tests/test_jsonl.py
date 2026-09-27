@@ -19,3 +19,10 @@ def test_a_bad_line_in_the_middle_is_corruption(tmp_path):
     path.write_text('{"a": 1}\nnot json\n{"a": 3}\n', encoding="utf-8")
     with pytest.raises(ValueError, match="line 2"):
         load_jsonl(path)
+
+
+def test_repair_writes_unix_line_endings(tmp_path):
+    path = tmp_path / "episodes.jsonl"
+    path.write_bytes(b'{"a": 1}\n{"a": ')
+    load_jsonl(path, repair=True)
+    assert path.read_bytes() == b'{"a": 1}\n'

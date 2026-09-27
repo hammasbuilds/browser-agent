@@ -13,7 +13,7 @@ oracle run and all results were regenerated from scratch.
 
 | Points | Criterion | Score | Reason |
 |---:|---|---:|---|
-| 15 | Works from a clean clone | 15 | Fresh clone: `uv sync`, `uv run pytest -q` (94 passed), `uv run python demo.py` succeed offline; pages, tokenizer and fixtures vendored and checksummed; browser tests skip cleanly without Chromium. |
+| 15 | Works from a clean clone | 15 | Fresh clone: `uv sync`, `uv run pytest -q` (95 passed), `uv run python demo.py` succeed offline; pages, tokenizer and fixtures vendored and checksummed; browser tests skip cleanly without Chromium. |
 | 20 | Real data, real result | 16 | 2,020 real MiniWoB++ episodes over 101 tasks, benchmark reward, seven encoders measured at every step. Capped: the end question (which encoding a model succeeds with) needs the queued model arm. |
 | 15 | Finding quality | 12 | The allow-list ablation now tests the headline's mechanism instead of assuming it (and an attribution run separates styling from MiniWoB's `data-*` grading leaks); needs are tagged by source with a sensitivity analysis; paired contrasts with task-level bootstrap CIs. Capped by the model arm; the needs are still hand-chosen, and "identifiable" is not a uniqueness test. |
 | 15 | Correctness | 14 | All reviewer bugs fixed and tested (model pooling, resume key, Ollama error paths, unknown tasks, split measure, CRLF, pipefail, page vs browser errors). Residual: stock-market is load-dependent for the oracle (19/20 this run, 20/20 the last). |
@@ -94,7 +94,7 @@ the model; `--dry-run` prints the plan). Defaults: `qwen2.5:14b-instruct`, seeds
 unset VIRTUAL_ENV
 uv sync
 uv run python scripts/fetch_miniwob.py --verify     # 218/218 files match the pinned commit
-uv run pytest -q                                    # 94 passed
+uv run pytest -q                                    # 95 passed
 uv run python demo.py                               # README Input/Output samples 1-4
 uv run browser-agent show click-color --seed 0 --encoder clean_dom,som_listeners,som_listeners_wide
 uv run browser-agent show login-user --seed 0 --encoder axtree,som

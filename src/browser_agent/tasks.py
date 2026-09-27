@@ -66,7 +66,6 @@ FAMILIES: dict[str, tuple[str, ...]] = {
         "enter-time",
         "login-user",
         "login-user-popup",
-        "form-sequence",
         "form-sequence-2",
         "form-sequence-3",
         "use-autocomplete",
@@ -91,7 +90,6 @@ FAMILIES: dict[str, tuple[str, ...]] = {
         "generate-number",
         "grid-coordinate",
         "guess-number",
-        "hot-cold",
         "identify-shape",
         "odd-or-even",
         "read-table",
@@ -126,11 +124,11 @@ FAMILIES: dict[str, tuple[str, ...]] = {
         "social-media-all",
         "social-media-some",
         "terminal",
-        "text-editor",
     ),
 }
 
-# Out of the action space by construction (no oracle is attempted).
+# Out of the action space (no oracle). The last three were attempted and found to need a
+# gesture the action space lacks; the evidence is in the README.
 EXCLUDED: dict[str, str] = {
     "bisect-angle": "free-form click at a computed point on an SVG",
     "chase-circle": "tracking a moving target with the pointer",
@@ -148,11 +146,14 @@ EXCLUDED: dict[str, str] = {
     "draw-circle": "free-form drawing",
     "draw-line": "free-form drawing",
     "find-midpoint": "free-form click at a computed point on an SVG",
+    "form-sequence": "a slider that a click only ever sets to 0 (needs drag or arrow keys)",
     "highlight-text": "text selection",
     "highlight-text-2": "text selection",
+    "hot-cold": "hover to find a hidden point, then a click at that exact point",
     "hover-shape": "hover",
     "moving-items": "clicking moving SVG targets",
     "resize-textarea": "drag a resize handle",
+    "text-editor": "styling a word needs text selection; typing clears the formatting",
     "right-angle": "free-form click at a computed point on an SVG",
     "use-colorwheel": "drag on a colour wheel",
     "use-colorwheel-2": "drag on a colour wheel",

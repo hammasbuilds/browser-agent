@@ -64,6 +64,9 @@ def test_survival_is_a_mean_of_task_means_over_solved_episodes_only():
     assert clean["episode_ceiling"]["mean"] == 0.5
     assert out["encoders"]["raw_html"]["episode_ceiling"]["mean"] == 1.0
     assert "click-color" in clean["examples_lost"]
+    # of the targets raw_html shows identifiably, how many clean_dom keeps usable
+    assert clean["usable_given_raw"]["mean"] == round((1 + 1 / 3) / 2, 4)
+    assert clean["usable_given_raw"]["tasks_losing_some"] == ["click-color"]
 
 
 def test_token_summary_reports_share_of_raw_html():

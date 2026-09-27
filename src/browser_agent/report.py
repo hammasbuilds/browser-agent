@@ -117,6 +117,8 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
     cells: dict[str, dict[str, dict[str, list[int]]]] = defaultdict(
         lambda: defaultdict(lambda: defaultdict(list))
     )
+    # task -> encoder -> 0/1 over target steps whose needs raw_html shows: kept by this encoder?
+    kept: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
     # task -> encoder -> list of 0/1 per episode: every target identifiable and reachable
     ceiling: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
     examples: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
@@ -128,6 +130,9 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
                 check = step["checks"][name]
                 for level in LEVELS:
                     cells[ep["task"]][name][level].append(int(check[level]))
+                if step["checks"]["raw_html"]["identifiable"]:
+                    usable = check["identifiable"] and (check["actionable"] or name == "raw_html")
+                    kept[ep["task"]][name].append(int(usable))
                 usable = check["identifiable"] and (check["actionable"] or name == "raw_html")
                 ok_all = ok_all and usable
                 if not check["identifiable"] and ep["task"] not in examples[name]:
@@ -143,6 +148,8 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
     tasks = sorted(cells)
     out: dict[str, Any] = {
         "unit": "per-task mean over target steps in oracle-solved episodes; CI bootstraps tasks",
+        "usable_given_raw": "of the targets raw_html shows identifiably, the share this encoding "
+        "keeps identifiable and reachable by an index (raw_html: by any selector)",
         "tasks": len(tasks),
         "target_steps": sum(len(cells[t]["raw_html"]["present"]) for t in tasks),
         "encoders": {},
@@ -153,6 +160,12 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
             per_task = {t: mean(cells[t][name][level]) for t in tasks}
             entry[level] = _interval(list(per_task.values()))
             entry[level]["tasks_below_1"] = sorted(t for t, v in per_task.items() if v < 1)
+        kept_by_task = {t: mean(kept[t][name]) for t in tasks if kept[t][name]}
+        entry["usable_given_raw"] = _interval(list(kept_by_task.values()))
+        entry["usable_given_raw"]["tasks"] = len(kept_by_task)
+        entry["usable_given_raw"]["tasks_losing_some"] = sorted(
+            t for t, v in kept_by_task.items() if v < 1
+        )
         ceil = {t: mean(ceiling[t][name]) for t in tasks if ceiling[t][name]}
         entry["episode_ceiling"] = _interval(list(ceil.values()))
         by_family: dict[str, list[float]] = defaultdict(list)

@@ -17,9 +17,17 @@ def click_test(ctx: OracleContext) -> Iterator[Step]:
     yield Step("click", "#subbtn")
 
 
-@oracle("click-test-2")
+@oracle("click-test-2", "click-test-transfer")
 def click_test_2(ctx: OracleContext) -> Iterator[Step]:
-    yield Step("click", "#subbtn", needs=("ONE",))
+    label = _match_button(ctx.utterance)
+    yield Step("click", ctx.nth("#area button", label), needs=(label,))
+
+
+def _match_button(utterance: str) -> str:
+    found = re.match(r"Click button (\w+)\.$", utterance)
+    if found is None:
+        raise OracleError(f"cannot parse {utterance!r}")
+    return found.group(1)
 
 
 @oracle("click-button-sequence")
@@ -148,11 +156,17 @@ def click_tab_2(ctx: OracleContext) -> Iterator[Step]:
                 p => [...p.querySelectorAll('.alink')].some(a => a.textContent === w))""",
         word,
     )
+    tab = ctx.texts("#area ul a")
     if panel < 0:
-        raise OracleError(f"no tab holds link {word!r}")
+        # click-tab-2-medium empties tab 2 after choosing the link; if the link was there,
+        # the task rewards clicking tab 2 itself.
+        if ctx.js("document.querySelectorAll('#tabs-2 .alink').length") != 0:
+            raise OracleError(f"no tab holds link {word!r}")
+        yield Step("click", '#area ul a[href="#tabs-2"]', needs=(tab[1],))
+        return
     active = ctx.js("$('#area').tabs('option', 'active')")
     if active != panel:
-        yield Step("click", f'#area ul a[href="#tabs-{panel + 1}"]', needs=(f"Tab #{panel + 1}",))
+        yield Step("click", f'#area ul a[href="#tabs-{panel + 1}"]', needs=(tab[panel],))
     yield Step("click", f"#tabs-{panel + 1} .alink:text-is({word!r}) >> nth=0", needs=(word,))
 
 

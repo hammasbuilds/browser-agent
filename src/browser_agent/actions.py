@@ -19,6 +19,24 @@ Kind = Literal["click", "type", "select", "scroll", "submit", "done"]
 KINDS: tuple[str, ...] = ("click", "type", "select", "scroll", "submit", "done")
 NEEDS_TARGET = {"click", "type", "select", "submit"}
 
+HOVER_SETTLE_MS = 60
+
+# Where to click: the centre unless something else covers it, then the first uncovered point
+# of a 5x5 grid over the box (click-test-2 places one button partly over the other). Returns
+# null for "the centre" and for elements off-screen, which Playwright scrolls to first.
+VISIBLE_POINT_JS = """el => {
+  const r = el.getBoundingClientRect();
+  const hits = (x, y) => {
+    const e = document.elementFromPoint(x, y);
+    return !!e && el.contains(e);
+  };
+  if (hits(r.x + r.width / 2, r.y + r.height / 2)) return null;
+  for (const fy of [0.1, 0.3, 0.5, 0.7, 0.9])
+    for (const fx of [0.1, 0.3, 0.5, 0.7, 0.9])
+      if (hits(r.x + r.width * fx, r.y + r.height * fy)) return {x: r.width * fx, y: r.height * fy};
+  return null;
+}"""
+
 
 class ActionError(ValueError):
     """An action that is malformed or cannot be carried out on the current page."""
@@ -116,10 +134,17 @@ def execute(page: Page, action: Action, shown: set[int] | None, timeout_ms: int 
     loc = resolve(page, action.target, shown)
     try:
         if action.kind == "click":
-            loc.click(timeout=timeout_ms)
+            point = loc.evaluate(VISIBLE_POINT_JS)
+            # Pointer first, then a beat, then the click: pages that swap an image on :hover
+            # (social-media) collapse the element while the new image loads, and a click in
+            # that window lands on the neighbour.
+            loc.hover(timeout=timeout_ms, position=point)
+            page.wait_for_timeout(HOVER_SETTLE_MS)
+            loc.click(timeout=timeout_ms, position=loc.evaluate(VISIBLE_POINT_JS))
         elif action.kind == "type":
             loc.fill("", timeout=timeout_ms)
-            loc.press_sequentially(action.text, timeout=timeout_ms)
+            # Real key events (tasks listen for keyup); the budget grows with the text.
+            loc.press_sequentially(action.text, timeout=timeout_ms + 50 * len(action.text))
         elif action.kind == "select":
             loc.select_option(label=list(action.options), timeout=timeout_ms)
         elif action.kind == "scroll":

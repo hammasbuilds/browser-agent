@@ -12,6 +12,11 @@ from pathlib import Path
 from playwright.sync_api import BrowserContext, Route
 
 ORIGIN = "http://miniwob.local"
+CONTENT_TYPES = {
+    ".html": "text/html; charset=utf-8",
+    ".js": "application/javascript; charset=utf-8",
+    ".css": "text/css; charset=utf-8",
+}
 
 
 def miniwob_dir() -> Path:
@@ -35,7 +40,13 @@ def install_routes(context: BrowserContext, root: Path | None = None) -> None:
         rel = route.request.url[len(ORIGIN) + 1 :].split("?", 1)[0].split("#", 1)[0]
         path = (base / rel).resolve()
         if path.is_relative_to(base) and path.is_file():
-            route.fulfill(path=str(path))
+            # The pages declare no charset; served without one, Chromium falls back to
+            # windows-1252 and unicode-test's "ÖK" arrives as "Ã–K".
+            kind = CONTENT_TYPES.get(path.suffix.lower())
+            if kind is None:
+                route.fulfill(path=str(path))
+            else:
+                route.fulfill(body=path.read_bytes(), content_type=kind)
         else:
             route.fulfill(status=404, body=f"not vendored: {rel}")
 

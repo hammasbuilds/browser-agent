@@ -162,7 +162,8 @@ EXCLUDED: dict[str, str] = {
 }
 
 
-# In-scope tasks the oracle cannot solve on every seed, and why (investigated, not guessed).
+# In-scope tasks the oracle cannot solve on every seed, or that depend on machine load, and why
+# (investigated, not guessed). Quoted in results/oracle.json next to any failure.
 ORACLE_LIMITS: dict[str, str] = {
     "click-menu": "submenus open on hover; clicking a parent item selects it and ends the "
     "episode, so only top-level targets are reachable by click",
@@ -173,8 +174,6 @@ ORACLE_LIMITS: dict[str, str] = {
     "observe-and-encode cycle on a loaded machine",
     "button-delay": "a 1 s wait with a 150 ms tolerance, measured across an observe-and-encode "
     "cycle whose length depends on machine load",
-    "choose-date-medium": "load-dependent: a datepicker animation outlasted the 3 s hover "
-    "timeout once; the same seed passes on a rerun",
 }
 
 

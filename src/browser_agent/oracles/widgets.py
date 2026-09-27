@@ -384,7 +384,10 @@ def use_autocomplete(ctx: OracleContext) -> Iterator[Step]:
     wait = 100 if "nodelay" in ctx.page.url else 600
     yield Step("type", "#tags", needs=("tags",), text=start, wait_ms=wait)
     stamp = _menu_item(ctx, start, end)
-    yield Step("click", _stamped(stamp), needs=tuple(s for s in (start, end) if s))
+    # The instruction constrains the item's text ("starts with Ca, ends with da"); the evidence
+    # is that text itself, so the need is the whole item, not the prefix and suffix as words.
+    (item,) = ctx.texts(_stamped(stamp))
+    yield Step("click", _stamped(stamp), needs=(item,))
     yield Step("click", "#subbtn", needs=("submit",))
 
 

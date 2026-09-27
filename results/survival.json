@@ -2,7 +2,11 @@
  "unit": "per-task mean over target steps in oracle-solved episodes; CI bootstraps tasks",
  "usable_given_raw": "of the targets raw_html shows identifiably, the share this encoding keeps identifiable and reachable by an index (raw_html: by any selector)",
  "tasks": 101,
- "target_steps": 5737,
+ "target_steps": 5743,
+ "target_steps_without_needs": 1307,
+ "invisible_target_steps": {
+  "terminal": 80
+ },
  "encoders": {
   "raw_html": {
    "present": {
@@ -565,10 +569,10 @@
     ]
    },
    "identifiable": {
-    "mean": 0.836,
+    "mean": 0.8426,
     "ci95": [
-     0.7731,
-     0.8903
+     0.7815,
+     0.8955
     ],
     "tasks_below_1": [
      "book-flight",
@@ -587,7 +591,6 @@
      "email-inbox-noscroll",
      "email-inbox-reply",
      "email-inbox-star-reply",
-     "enter-password",
      "grid-coordinate",
      "login-user",
      "login-user-popup",
@@ -616,10 +619,10 @@
     ]
    },
    "usable_given_raw": {
-    "mean": 0.8919,
+    "mean": 0.8985,
     "ci95": [
-     0.8377,
-     0.9392
+     0.8473,
+     0.9463
     ],
     "tasks": 101,
     "tasks_losing_some": [
@@ -636,7 +639,6 @@
      "email-inbox-noscroll",
      "email-inbox-reply",
      "email-inbox-star-reply",
-     "enter-password",
      "grid-coordinate",
      "login-user",
      "login-user-popup",
@@ -645,10 +647,10 @@
     ]
    },
    "episode_ceiling": {
-    "mean": 0.7292,
+    "mean": 0.7391,
     "ci95": [
-     0.6406,
-     0.8074
+     0.6515,
+     0.8173
     ]
    },
    "identifiable_by_family": {
@@ -666,7 +668,7 @@
     },
     "form": {
      "tasks": 22,
-     "mean": 0.8672
+     "mean": 0.8975
     },
     "navigate": {
      "tasks": 14,
@@ -715,14 +717,6 @@
      "utterance": "Search for surreal movies directed by Baxter from year 1995.",
      "needs": [
       "genre"
-     ],
-     "present": true
-    },
-    "enter-password": {
-     "seed": 0,
-     "utterance": "Enter the password \"rUT3X\" into both text fields and press submit.",
-     "needs": [
-      "password"
      ],
      "present": true
     },
@@ -1628,6 +1622,36 @@
      "present": false
     }
    }
+  }
+ },
+ "contrasts_usable_given_raw": {
+  "som_listeners - som": {
+   "mean": 0.0687,
+   "ci95": [
+    0.0291,
+    0.1146
+   ]
+  },
+  "clean_dom - axtree": {
+   "mean": 0.0266,
+   "ci95": [
+    -0.0166,
+    0.0726
+   ]
+  },
+  "som_listeners - axtree": {
+   "mean": 0.0327,
+   "ci95": [
+    -0.0071,
+    0.077
+   ]
+  },
+  "clean_dom - som_listeners": {
+   "mean": -0.0061,
+   "ci95": [
+    -0.0248,
+    0.0055
+   ]
   }
  },
  "pairs_usable_given_raw": {

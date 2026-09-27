@@ -1,16 +1,14 @@
 {
  "tasks": 101,
  "episodes": 2020,
- "tasks_always_solved": 96,
+ "tasks_always_solved": 98,
  "tasks_never_solved": [],
  "tasks_sometimes_failed": [
-  "choose-date-medium",
   "click-menu",
   "click-pie",
-  "click-pie-nodelay",
-  "stock-market"
+  "click-pie-nodelay"
  ],
- "episode_success_rate": 0.9876,
+ "episode_success_rate": 0.9891,
  "per_task": {
   "ascending-numbers": {
    "family": "reason",
@@ -99,21 +97,14 @@
   "choose-date-medium": {
    "family": "form",
    "episodes": 20,
-   "solved": 19,
-   "rate": 0.95,
+   "solved": 20,
+   "rate": 1.0,
    "wilson95": [
-    0.7639,
-    0.9911
+    0.8389,
+    1.0
    ],
    "steps_mean": 3.5,
-   "failures": [
-    {
-     "seed": 5,
-     "raw_reward": 0.0,
-     "error": "ActionError: click 6 failed: Locator.hover: Timeout 3000ms exceeded."
-    }
-   ],
-   "explanation": "load-dependent: a datepicker animation outlasted the 3 s hover timeout once; the same seed passes on a rerun"
+   "failures": []
   },
   "choose-date-nodelay": {
    "family": "form",
@@ -1187,26 +1178,14 @@
   "stock-market": {
    "family": "reason",
    "episodes": 20,
-   "solved": 18,
-   "rate": 0.9,
+   "solved": 20,
+   "rate": 1.0,
    "wilson95": [
-    0.699,
-    0.9721
+    0.8389,
+    1.0
    ],
    "steps_mean": 1.0,
-   "failures": [
-    {
-     "seed": 3,
-     "raw_reward": -1.0,
-     "error": null
-    },
-    {
-     "seed": 8,
-     "raw_reward": -1.0,
-     "error": null
-    }
-   ],
-   "explanation": "the price can stay under the threshold for 400 ms, less than one observe-and-encode cycle on a loaded machine"
+   "failures": []
   },
   "terminal": {
    "family": "composite",

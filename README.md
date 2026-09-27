@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="python">
   <img src="https://img.shields.io/badge/browser-Playwright%20Chromium-informational" alt="browser">
   <img src="https://img.shields.io/badge/benchmark-MiniWoB%2B%2B%20(101%20tasks)-success" alt="benchmark">
-  <img src="https://img.shields.io/badge/tests-63%20passing-success" alt="tests">
+  <img src="https://img.shields.io/badge/tests-75%20passing-success" alt="tests">
   <img src="https://img.shields.io/badge/model%20arm-queued-lightgrey" alt="model arm">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
 </p>
@@ -34,7 +34,7 @@ flowchart TD
     B --> C3["axtree"]
     B --> C4["som"]
     B --> C5["som_listeners"]
-    O["scripted oracle<br/>(solves 96/101 tasks on every seed)"] --> T["the element it had to act on,<br/>and the words that pick it out"]
+    O["scripted oracle<br/>(solves 98/101 tasks on every seed)"] --> T["the element it had to act on,<br/>and the words that pick it out"]
     C1 --> S["does the target survive?<br/>present / identifiable / actionable"]
     C2 --> S
     C3 --> S
@@ -53,41 +53,61 @@ model: a scripted oracle solves each task through the same action layer the agen
 every step the element it acts on is looked up in all five encodings.
 
 > **A numbered list of interactive elements is 3.6x cheaper than raw HTML and keeps 93% of the
-> targets raw HTML shows, but only when it asks Chrome which elements have click listeners;
-> the usual attribute-and-cursor heuristic keeps 86%. The rest is colour and icon identity,
-> which no text encoding keeps: 10 of 101 tasks lose a target in every cleaned encoding.**
+> targets raw HTML shows, as many as a cleaned DOM at half its tokens, but only when it asks
+> Chrome which elements have click listeners; the usual attribute-and-cursor heuristic keeps
+> 86%. What no text encoding keeps is colour and icon identity: 10 of 101 tasks lose a target
+> in every cleaned encoding, and no pair of encodings recovers them.**
 
 ## Findings
 
 All numbers come from `results/*.json`, produced by `browser-agent oracle --seeds 20` and
 `browser-agent report` on this machine. The unit is the task: each task contributes its mean
 over seeds, and the intervals are 95% bootstraps over the 101 tasks. Survival counts only the
-5,737 target steps of episodes the oracle actually solved.
+5,743 target steps of episodes the oracle actually solved.
 
 | encoding | tokens, median first page | share of raw HTML | targets kept, of those raw HTML shows (95% CI) | tasks losing any | episodes where every target is usable |
 |---|---:|---:|---:|---:|---:|
 | `raw_html` | 210 | 1.00 | 1.000 (reference) | 0 | 0.914 |
 | `clean_dom` | 113 | 0.57 | 0.925 [0.878, 0.965] | 13 | 0.804 |
-| `axtree` | 63 | 0.31 | 0.892 [0.838, 0.939] | 19 | 0.729 |
+| `axtree` | 63 | 0.31 | 0.899 [0.847, 0.946] | 18 | 0.739 |
 | `som` | 54 | 0.26 | 0.863 [0.801, 0.918] | 22 | 0.710 |
 | `som_listeners` | 71 | 0.28 | **0.931** [0.890, 0.969] | 13 | 0.811 |
 
-"Kept" means the target is still *identifiable* (the words the instruction uses to pick it
-out appear in its own representation) and *actionable* (it carries an index the executor
-accepts). "Share of raw HTML" is the median over tasks of the per-task token ratio.
+"Kept" means the target is still *identifiable* and reachable by an index. Identifiable: the
+words the instruction uses to pick the target out (its label, the colour it is described by,
+the field name) appear, as whole words, in what the encoding says about the target itself or
+a label bound to it: tag or role names, attribute values, text, accessible names and states,
+never an index number or markup. 1,307 of the 5,743 target steps (23%) are picked by position
+or are the only one of their kind; for those, present is enough. Every fragment a cleaned
+encoding emits carries an index, so for the four of them "reachable" equals "present".
+"Share of raw HTML" is the median over tasks of the per-task token ratio.
+
+Paired differences in "kept" (per-task difference, bootstrapped over tasks), from
+`contrasts_usable_given_raw`:
+
+| comparison | mean difference | 95% CI |
+|---|---:|---:|
+| `som_listeners` - `som` | +0.069 | [+0.029, +0.115] |
+| `clean_dom` - `som_listeners` | -0.006 | [-0.025, +0.006] |
+| `clean_dom` - `axtree` | +0.027 | [-0.017, +0.073] |
+| `som_listeners` - `axtree` | +0.033 | [-0.007, +0.077] |
 
 1. **Listener detection is the cheapest win.** `som` finds interactive elements the way most
    DOM agents do: tag, ARIA role, `onclick`/`tabindex`, or where `cursor: pointer` starts.
    MiniWoB++ binds its handlers with d3 and jQuery, which leave no attribute behind. Asking
    Chrome for its own click-target flag (`DOMSnapshot.isClickable`) cut the tasks losing a
    target from 22 to 13 (the Reply and Forward buttons of four `email-inbox` variants,
-   social-media, grid-coordinate, tic-tac-toe, ascending-numbers, form-sequence-3) and lost
-   none, for 16 more tokens at the median.
-2. **The accessibility tree loses unlabelled form fields.** `login-user`, `enter-password` and
-   `login-user-popup` put a `<label>` next to each input without `for=` and without wrapping
-   it, so Chrome gives both textboxes an empty name. The tree shows `text "Username"` and a
-   nameless `textbox` on separate lines; the id `username` that every HTML encoding keeps is
-   gone. Of the 19 tasks `axtree` loses, 9 are ones `clean_dom` keeps.
+   social-media, grid-coordinate, tic-tac-toe, ascending-numbers, form-sequence-3), for 16
+   more tokens at the median; it adds elements to the list, so it cannot lose any. The gain,
+   +0.069 [+0.029, +0.115], is the only contrast in the table whose interval excludes zero:
+   with it, the list is statistically indistinguishable from `clean_dom` at half the tokens.
+2. **The accessibility tree loses unlabelled form fields and unnamed controls.** `login-user`
+   and `login-user-popup` put a `<label>` next to each input without `for=` and without
+   wrapping it, so Chrome gives both textboxes an empty name. The tree shows `text "Username"`
+   and a nameless `textbox` on separate lines; the id `username` that every HTML encoding keeps
+   is gone. Of the 18 tasks `axtree` loses, 8 are ones `clean_dom` keeps: those two, the Send
+   buttons of four `email-inbox` variants (an unnamed `<span>`), and the grid-coordinate and
+   tic-tac-toe cells.
 3. **Ten tasks lose a target in every cleaned encoding**, and combining encodings does not
    rescue them: the best pair (`axtree` + `som_listeners`) still keeps only 0.949
    [0.911, 0.981]. They are the tasks decided by colour (`click-color`, `click-shades`), by
@@ -106,12 +126,12 @@ accepts). "Share of raw HTML" is the median over tasks of the per-task token rat
    also leaks: `find-greatest`'s face-down card values sit in the DOM at `font-size: 0`, and
    raw HTML and the accessibility tree both show them to an agent that should not see them.
 
-The oracle itself solves 96 of 101 in-scope tasks on all 20 seeds (98.8% of 2,020 episodes).
-The five exceptions are explained, not guessed, in `results/oracle.json`: `click-menu` opens
-submenus on hover only (4/20), `click-pie` and `click-pie-nodelay` lose the click when the
-answer is the item the wheel starts on (17/20 each), `stock-market`'s buying window can be
-shorter than one observe-and-encode cycle (18/20), and one `choose-date-medium` episode timed
-out under machine load and passes on a rerun (19/20).
+The oracle itself solves 98 of 101 in-scope tasks on all 20 seeds (98.9% of 2,020 episodes).
+The three exceptions are explained, not guessed, in `results/oracle.json`: `click-menu` opens
+submenus on hover only (4/20), and `click-pie` and `click-pie-nodelay` lose the click when the
+answer is the item the wheel starts on (17/20 each). Two timing-bound tasks depend on machine
+load and solved 20/20 here: `stock-market`, whose buying window can be shorter than one
+observe-and-encode cycle, and `button-delay`, whose 150 ms tolerance spans one.
 
 ### The model arm (built, tested with a fake, queued)
 
@@ -119,8 +139,11 @@ The findings above bound what a model *could* do with each encoding. Whether
 `qwen2.5:14b-instruct` actually does it is queued: `scripts/run_models.sh` runs every
 oracle-solved (task, seed) for seeds 0-4 under all five encodings, about 9,550 calls
 (19,100 at most), then reports success per encoding and family with Wilson intervals, steps,
-tokens, and success split by whether that episode's targets survived the encoding. No vision
-model is installed, so there is **no screenshot arm**; finding 3 is the case one would test.
+tokens, and success split by whether that episode's targets survived the encoding. The model
+acts only through the handles its encoding shows (indices, or CSS selectors for raw HTML), may
+`wait` up to 5 s like the oracle does, and a prompt too long for the context window is
+recorded as an overflow rather than silently truncated. No vision model is installed, so
+there is **no screenshot arm**; finding 3 is the case one would test.
 
 ## Input / Output
 
@@ -191,12 +214,12 @@ click-collapsible-2 (seed 0): Expand the sections below, to find and click on th
 **5. The whole run**, from `browser-agent report`:
 
 ```
-oracle: 96/101 tasks solved on every seed, 98.8% of 2020 episodes
+oracle: 98/101 tasks solved on every seed, 98.9% of 2020 episodes
 
 encoder        tokens (median)   present  identif.   action.   ceiling
 raw_html                   210     1.000     0.944     0.573     0.914
 clean_dom                  113     0.918     0.869     0.918     0.804
-axtree                      63     0.964     0.836     0.964     0.729
+axtree                      63     0.964     0.843     0.964     0.739
 som                         54     0.879     0.813     0.879     0.710
 som_listeners               71     0.987     0.875     0.987     0.811
 ```
@@ -209,7 +232,7 @@ cd browser-agent
 uv sync
 uv run playwright install chromium      # skip if Playwright's Chromium is already installed
 
-uv run pytest -q                        # 63 tests, no network, no model
+uv run pytest -q                        # 75 tests, no network, no model
 uv run python demo.py                   # four pages, five encodings, known answers
 uv run browser-agent tasks              # the 101 runnable tasks and the 29 left out, with reasons
 uv run browser-agent show click-color --seed 0
@@ -229,7 +252,7 @@ src/browser_agent/
   snapshot.js     one DOM walk: stable data-ba-id stamps, text, visibility, live form state
   snapshot.py     merges the walk with Chrome's AX tree and click targets (CDP)
   encoders.py     raw_html, clean_dom, axtree, som, som_listeners
-  actions.py      click / type / select / scroll / submit / done, by index or CSS selector
+  actions.py      click / type / select / scroll / submit / wait / done, by index or selector
   survival.py     present / identifiable / actionable for one target in one encoding
   oracles/        scripted policies for 101 tasks (click, forms, reading, widgets)
   harness.py      oracle episodes -> results/oracle_episodes.jsonl
@@ -257,13 +280,14 @@ which needs Ollama serving `qwen2.5:14b-instruct` and roughly 12 GB of free VRAM
 uv run pytest -q
 ```
 
-63 tests. The encoder and survival tests run on snapshots saved from real task pages
+75 tests. The encoder and survival tests run on snapshots saved from real task pages
 (`tests/fixtures/`), so they need no browser. The browser tests (`-m browser`) drive real
 Chromium: seeded resets are deterministic, a wrong click gets the benchmark's negative reward,
 the executor refuses indices the agent was not shown, pages cannot reach the network, and the
 agent loop runs end to end against a fake model that reads the set-of-marks, a raw-HTML agent
 that must fall back to selectors, a model that never returns JSON, and a prompt too long for
-the context window (never sent). They skip, rather than fail, when Chromium is missing.
+the context window (never sent), and an agent on an indexed encoding trying a CSS selector
+(refused). They skip, rather than fail, when Chromium is missing.
 
 ## What this does NOT do
 
@@ -274,12 +298,16 @@ the context window (never sent). They skip, rather than fail, when Chromium is m
   are the obvious place to test one.
 - **It does not cover real websites.** MiniWoB++ pages are tiny (210 tokens of raw HTML at the
   median, 5,813 at most). Ratios between encodings transfer better than absolute counts.
-- **"Identifiable" is strict and literal.** The deciding words must appear in the element's own
-  representation or a label bound to it; text merely nearby does not count. A model may still
-  guess right from adjacency; the model arm's survival split measures how often.
-- **The action space has no hover, drag or text selection.** 29 tasks that need them are
-  excluded up front and listed by `browser-agent tasks`, three of them (`form-sequence`,
-  `hot-cold`, `text-editor`) after an oracle was attempted and failed for that reason.
+- **"Identifiable" is strict and literal, and is not a uniqueness test.** The deciding words
+  must appear in the element's own representation or a label bound to it; text merely nearby
+  does not count, and it does not check that the words pick out *only* the target. The words
+  themselves were chosen per task by hand (they are in `src/browser_agent/oracles/`). A model
+  may still guess right from adjacency; the model arm's survival split measures how often.
+- **The action space has no hover action, no drag and no text selection.** (A click does move
+  the pointer onto the element first; no action hovers without clicking.) 29 tasks that need
+  one are excluded up front and listed by `browser-agent tasks`, three of them
+  (`form-sequence`, `hot-cold`, `text-editor`) after an oracle was attempted and failed for
+  that reason.
 - **It is not browser-use or Stagehand.** It rebuilds the observation-and-action core those
   projects share, to measure it; there is no planner, memory, vision, or cloud browser.
 
@@ -311,6 +339,10 @@ the context window (never sent). They skip, rather than fail, when Chromium is m
 - **Raw HTML's "present = 1.000" looked like a bug** and is not: the encoding is the page body,
   so every target is in it. The informative number is the conditional one: of the targets raw
   HTML shows identifiably, how many each cheaper encoding keeps.
+- **The first identifiability check was too easy to pass.** It searched the rendered text, so
+  a needed "5" was satisfied by the index `[5]` and a needed ">" by any tag's closing bracket.
+  An independent review caught it; fragments now carry their content without indices or
+  markup, and needs match as whole words. Survival was re-measured from scratch after the fix.
 
 ## Keywords
 

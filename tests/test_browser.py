@@ -97,3 +97,18 @@ def test_a_prompt_over_the_context_window_is_never_sent(env):
     fake = FakeClient(lambda messages: '{"action": "done"}')
     episode = run_agent_episode(env, fake, "click-test", 0, "raw_html", max_steps=3, num_ctx=300)
     assert episode.context_overflow and fake.calls == [] and not episode.success
+
+
+def test_indexed_encodings_cannot_reach_past_what_they_show_with_a_selector(env):
+    replies = iter(['{"action": "click", "target": "#subbtn"}', '{"action": "done"}'])
+    fake = FakeClient(lambda messages: next(replies))
+    episode = run_agent_episode(env, fake, "click-test", 0, "som", max_steps=3)
+    assert not episode.success and episode.action_errors == 1
+    assert "acted on by index" in episode.history[0]
+
+
+def test_the_model_can_wait(env):
+    replies = iter(['{"action": "wait", "ms": 50}', '{"action": "done"}'])
+    fake = FakeClient(lambda messages: next(replies))
+    episode = run_agent_episode(env, fake, "click-test", 0, "axtree", max_steps=3)
+    assert episode.history == ["wait ms=50 -> ok", "done"] and episode.error is None

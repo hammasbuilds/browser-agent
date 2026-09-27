@@ -53,7 +53,6 @@ class AXNode:
     role: str
     name: str
     owner: int | None  # stamp of the element (or of a text node's parent element)
-    is_text_node: bool
     ignored: bool
     props: dict[str, Any]
     children: list[int]  # indices into Snapshot.ax
@@ -159,10 +158,9 @@ class Snapshot:
 # ---- capture ---------------------------------------------------------------------------
 
 
-def _backend_to_stamp(document: dict[str, Any]) -> tuple[dict[int, int], set[int]]:
+def _backend_to_stamp(document: dict[str, Any]) -> dict[int, int]:
     """Map every backend node id to the stamp of its element (text nodes: their parent's)."""
     stamps: dict[int, int] = {}
-    text_nodes: set[int] = set()
 
     def walk(node: dict[str, Any], parent_stamp: int | None) -> None:
         stamp: int | None = None
@@ -175,12 +173,11 @@ def _backend_to_stamp(document: dict[str, Any]) -> tuple[dict[int, int], set[int
                 stamps[node["backendNodeId"]] = stamp
         elif node.get("nodeType") == 3 and parent_stamp is not None:
             stamps[node["backendNodeId"]] = parent_stamp
-            text_nodes.add(node["backendNodeId"])
         for child in node.get("children", []):
             walk(child, stamp)
 
     walk(document["root"], None)
-    return stamps, text_nodes
+    return stamps
 
 
 _AX_PROPS = {
@@ -195,7 +192,7 @@ _AX_PROPS = {
 }
 
 
-def _ax_nodes(raw: list[dict[str, Any]], stamps: dict[int, int], text_nodes: set[int]):
+def _ax_nodes(raw: list[dict[str, Any]], stamps: dict[int, int]) -> tuple[list[AXNode], int]:
     index = {n["nodeId"]: i for i, n in enumerate(raw)}
     out: list[AXNode] = []
     for n in raw:
@@ -211,7 +208,6 @@ def _ax_nodes(raw: list[dict[str, Any]], stamps: dict[int, int], text_nodes: set
                 role=n.get("role", {}).get("value", ""),
                 name=str(n.get("name", {}).get("value", "") or ""),
                 owner=stamps.get(backend) if backend is not None else None,
-                is_text_node=backend in text_nodes,
                 ignored=bool(n.get("ignored")),
                 props=props,
                 children=[index[c] for c in n.get("childIds", []) if c in index],
@@ -238,8 +234,8 @@ def capture(page: Page, cdp: CDPSession) -> Snapshot:
         " return typeof u === 'string' ? u : u.utterance; })()"
     )
     document = cdp.send("DOM.getDocument", {"depth": -1})
-    stamps, text_nodes = _backend_to_stamp(document)
-    ax, ax_root = _ax_nodes(cdp.send("Accessibility.getFullAXTree")["nodes"], stamps, text_nodes)
+    stamps = _backend_to_stamp(document)
+    ax, ax_root = _ax_nodes(cdp.send("Accessibility.getFullAXTree")["nodes"], stamps)
     dom_snap = cdp.send("DOMSnapshot.captureSnapshot", {"computedStyles": []})
     nodes = {n["id"]: Node(**n) for n in walked["nodes"]}
     return Snapshot(

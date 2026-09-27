@@ -1,9 +1,13 @@
 """Five ways to turn one :class:`Snapshot` into the text a model reads.
 
 Every encoder returns an :class:`Encoding`: the text itself, plus a list of fragments saying
-which element each piece of text came from and which index (if any) the action layer will
-accept for it. The fragments are what make "does the target survive this encoding?" a question
-with a mechanical answer instead of a judgement call.
+which element each piece of text came from, what a reader can learn from it, and which index
+(if any) the action layer will accept for it. The fragments are what make "does the target
+survive this encoding?" a question with a mechanical answer instead of a judgement call.
+
+A fragment's ``evidence`` is the content of its text without the syntax: tag or role names,
+attribute values, element text, accessibility names and states, but never an index or an
+angle bracket. That keeps a needed "5" from being met by ``[5]`` or a needed ">" by markup.
 
 ``raw_html``       the page's ``<body>`` exactly as serialised. No indices; act by CSS selector.
 ``clean_dom``      visible elements only, a short attribute allow-list, empty wrappers pruned,
@@ -46,7 +50,7 @@ SOM_TEXT_LIMIT = 100
 @dataclass
 class Fragment:
     owner: int  # stamp of the element this text represents
-    text: str
+    evidence: str  # what the text says about ``owner``, without indices or markup
     handle: int | None  # the index an action may use to reach ``owner``
 
 
@@ -61,24 +65,36 @@ class Encoding:
         return {f.handle for f in self.fragments if f.handle is not None}
 
 
-def _attr_text(node: Node) -> str:
-    parts: list[str] = []
-    for key in KEEP_ATTRS:
-        value = node.attr(key)
-        if value is not None:
-            parts.append(f'{key}="{html.escape(value)}"' if value else key)
+def _kept_attrs(node: Node) -> list[tuple[str, str]]:
+    """Allow-listed attributes plus live form state; an empty value is a bare flag."""
+    kept = [(k, v) for k in KEEP_ATTRS if (v := node.attr(k)) is not None]
     if node.value:
-        parts.append(f'value="{html.escape(node.value)}"')
+        kept.append(("value", node.value))
     if node.checked:
-        parts.append("selected" if node.tag == "option" else "checked")
-    return " ".join(parts)
+        kept.append(("selected" if node.tag == "option" else "checked", ""))
+    return kept
+
+
+def _attr_text(kept: list[tuple[str, str]]) -> str:
+    return " ".join(f'{k}="{html.escape(v)}"' if v else k for k, v in kept)
+
+
+def _evidence(*parts: str) -> str:
+    return " ".join(p for p in parts if p)
+
+
+def _own_text(node: Node) -> str:
+    return " ".join(c.strip() for c in node.children if isinstance(c, str) and c.strip())
 
 
 # ---- raw HTML ------------------------------------------------------------------------------
 
 
 def raw_html(snap: Snapshot) -> Encoding:
-    frags = [Fragment(n.id, n.outer, None) for n in snap.nodes.values()]
+    frags = [
+        Fragment(n.id, _evidence(n.tag, *(v or k for k, v in n.attrs), _own_text(n)), None)
+        for n in snap.nodes.values()
+    ]
     return Encoding("raw_html", snap.raw_html, frags)
 
 
@@ -93,7 +109,8 @@ def clean_dom(snap: Snapshot) -> Encoding:
         node = snap.nodes[nid]
         if nid not in visible or node.tag in PRUNE_TAGS:
             return ""
-        attrs = _attr_text(node)
+        kept = _kept_attrs(node)
+        attrs = _attr_text(kept)
         inner: list[str] = []
         own_text = False
         rendered_children = 0
@@ -114,7 +131,8 @@ def clean_dom(snap: Snapshot) -> Encoding:
             return body  # unwrap a bare single-child wrapper; clicks on the child bubble up
         head = f"{node.tag} i={nid}" + (f" {attrs}" if attrs else "")
         text = f"<{head}>" if node.tag in VOID_TAGS else f"<{head}>{body}</{node.tag}>"
-        frags.append(Fragment(nid, text, nid))
+        evidence = _evidence(node.tag, *(v or k for k, v in kept), _own_text(node))
+        frags.append(Fragment(nid, evidence, nid))
         return text
 
     text = "\n".join(filter(None, (render(r) for r in snap.roots)))
@@ -137,14 +155,22 @@ DROPPED_ROLES = {"InlineTextBox", "LineBreak"}
 STATEFUL_PROPS = {"checked", "expanded", "pressed"}  # "false" is news for these
 
 
-def _ax_line(node: AXNode, indent: int) -> str:
+def _ax_props(node: AXNode) -> list[str]:
     props = []
     for key, value in node.props.items():
         if key == "value" or (value is False and key not in STATEFUL_PROPS):
             continue
         props.append(key if value is True else f"{key}={str(value).lower()}")
+    return props
+
+
+def _ax_evidence(node: AXNode) -> str:
+    return _evidence(node.role, node.name, *_ax_props(node), str(node.props.get("value", "")))
+
+
+def _ax_line(node: AXNode, indent: int) -> str:
     head = node.role + (f' "{node.name}"' if node.name else "")
-    head += "".join(f" [{p}]" for p in props)
+    head += "".join(f" [{p}]" for p in _ax_props(node))
     head += f" [{node.owner}]"
     if "value" in node.props:
         head += f": {node.props['value']}"
@@ -165,14 +191,12 @@ def axtree(snap: Snapshot) -> Encoding:
             pass  # not exposed, or outside the task area: lift its children
         elif node.role == "StaticText":
             if name and name != parent_name:
-                line = "  " * indent + f'- text "{name}" [{node.owner}]'
-                lines.append(line)
-                frags.append(Fragment(node.owner, line, node.owner))
+                lines.append("  " * indent + f'- text "{name}" [{node.owner}]')
+                frags.append(Fragment(node.owner, name, node.owner))
             return
         elif not (node.role in TRANSPARENT_ROLES and not name):
-            line = _ax_line(node, indent)
-            lines.append(line)
-            frags.append(Fragment(node.owner, line, node.owner))
+            lines.append(_ax_line(node, indent))
+            frags.append(Fragment(node.owner, _ax_evidence(node), node.owner))
             emitted = True
         for child in node.children:
             walk(child, indent + 1 if emitted else indent, name if emitted else parent_name)
@@ -183,8 +207,17 @@ def axtree(snap: Snapshot) -> Encoding:
 
 # ---- set-of-marks --------------------------------------------------------------------------
 
-INTERACTIVE_TAGS = {"a", "button", "input", "select", "textarea", "summary", "details", "label"}
-INTERACTIVE_TAGS |= {"option"}
+INTERACTIVE_TAGS = {
+    "a",
+    "button",
+    "input",
+    "select",
+    "textarea",
+    "summary",
+    "details",
+    "label",
+    "option",
+}
 INTERACTIVE_ROLES = {
     "button",
     "link",
@@ -230,14 +263,15 @@ def _som(snap: Snapshot, name: str, keep: Callable[[Node], bool]) -> Encoding:
         text = snap.visible_text(nid)
         if len(text) > SOM_TEXT_LIMIT:
             text = text[: SOM_TEXT_LIMIT - 3] + "..."
-        attrs = _attr_text(node)
+        kept = _kept_attrs(node)
+        attrs = _attr_text(kept)
         head = node.tag + (f" {attrs}" if attrs else "")
         if node.tag in VOID_TAGS:
-            line = f"[{nid}]<{head}>"
+            text = ""
+            lines.append(f"[{nid}]<{head}>")
         else:
-            line = f"[{nid}]<{head}>{html.escape(text, quote=False)}</{node.tag}>"
-        lines.append(line)
-        frags.append(Fragment(nid, line, nid))
+            lines.append(f"[{nid}]<{head}>{html.escape(text, quote=False)}</{node.tag}>")
+        frags.append(Fragment(nid, _evidence(node.tag, *(v or k for k, v in kept), text), nid))
     return Encoding(name, "\n".join(lines), frags)
 
 

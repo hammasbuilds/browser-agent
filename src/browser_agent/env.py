@@ -90,7 +90,6 @@ class MiniWoBEnv:
         self._context: BrowserContext | None = None
         self.page: Page | None = None
         self._cdp: CDPSession | None = None
-        self.task: str | None = None
 
     def __enter__(self) -> MiniWoBEnv:
         self._pw = sync_playwright().start()
@@ -130,7 +129,6 @@ class MiniWoBEnv:
         if not task_path(task, self.root).is_file():
             raise TaskNotFoundError(f"no MiniWoB++ page for task {task!r}")
         page = self._live_page()
-        self.task = task
         page.goto(task_url(task))
         page.wait_for_function("typeof core !== 'undefined' && typeof genProblem === 'function'")
         page.evaluate(STAMP_HELPER)

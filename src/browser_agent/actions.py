@@ -2,8 +2,13 @@
 
 An action names its target either by an index taken from the current observation or by a CSS
 selector. Indices are the ``data-ba-id`` stamps, so an index shown by any encoder resolves to
-the same element; the executor refuses an index the current observation did not show, so a
-model cannot act on something its encoding hid from it.
+the same element. For a model, the executor accepts only the handles its encoding offers: the
+indices the current observation showed (indexed encodings), or CSS selectors (raw HTML, which
+shows no indices). So a model cannot act on something its encoding hid from it, and cannot
+reach past an accessibility tree with ``#password``. The oracle is unrestricted.
+
+``wait`` exists because some tasks are about time (a button that must be pressed after a
+delay, a price that must be watched); the oracle waits between steps, and so may the model.
 """
 
 from __future__ import annotations
@@ -15,9 +20,10 @@ from typing import Any, Literal
 from playwright.sync_api import Error as PlaywrightError
 from playwright.sync_api import Locator, Page
 
-Kind = Literal["click", "type", "select", "scroll", "submit", "done"]
-KINDS: tuple[str, ...] = ("click", "type", "select", "scroll", "submit", "done")
+Kind = Literal["click", "type", "select", "scroll", "submit", "wait", "done"]
+KINDS: tuple[str, ...] = ("click", "type", "select", "scroll", "submit", "wait", "done")
 NEEDS_TARGET = {"click", "type", "select", "submit"}
+MAX_WAIT_MS = 5000
 
 HOVER_SETTLE_MS = 60
 
@@ -49,6 +55,7 @@ class Action:
     text: str = ""  # for type
     options: tuple[str, ...] = field(default_factory=tuple)  # for select (labels)
     dy: int = 0  # for scroll, in pixels
+    ms: int = 0  # for wait, in milliseconds
 
     def describe(self) -> str:
         where = "" if self.target is None else f" {self.target!r}"
@@ -59,6 +66,8 @@ class Action:
             extra = f" options={list(self.options)!r}"
         elif self.kind == "scroll":
             extra = f" dy={self.dy}"
+        elif self.kind == "wait":
+            extra = f" ms={self.ms}"
         return f"{self.kind}{where}{extra}"
 
 
@@ -95,21 +104,35 @@ def parse_action(obj: Any) -> Action:
     dy = obj.get("dy", 100)
     if kind == "scroll" and (isinstance(dy, bool) or not isinstance(dy, int)):
         raise ActionError("scroll needs an integer 'dy'")
+    ms = obj.get("ms", 1000)
+    if kind == "wait" and (
+        isinstance(ms, bool) or not isinstance(ms, int) or not 0 <= ms <= MAX_WAIT_MS
+    ):
+        raise ActionError(f"wait needs an integer 'ms' from 0 to {MAX_WAIT_MS}")
     return Action(
         kind=kind,
-        target=target,
+        target=target if kind != "wait" else None,
         text=text if kind == "type" else "",
         options=tuple(options) if kind == "select" else (),
         dy=dy if kind == "scroll" else 0,
+        ms=ms if kind == "wait" else 0,
     )
 
 
-def resolve(page: Page, target: int | str, shown: set[int] | None) -> Locator:
-    """Turn an index or selector into a locator for exactly one element."""
+def resolve(
+    page: Page, target: int | str, shown: set[int] | None, selectors: bool = True
+) -> Locator:
+    """Turn an index or selector into a locator for exactly one element.
+
+    ``shown``: the indices the agent may use (None: any). ``selectors``: whether CSS selectors
+    are allowed at all.
+    """
     if isinstance(target, int):
         if shown is not None and target not in shown:
             raise ActionError(f"index {target} is not in the current observation")
         loc = page.locator(f'[data-ba-id="{target}"]')
+    elif not selectors:
+        raise ActionError(f"{target!r} is not an index; this observation is acted on by index")
     else:
         loc = page.locator(target)
     try:
@@ -123,15 +146,24 @@ def resolve(page: Page, target: int | str, shown: set[int] | None) -> Locator:
     return loc
 
 
-def execute(page: Page, action: Action, shown: set[int] | None, timeout_ms: int = 3000) -> None:
-    """Carry out ``action``. ``shown`` is the set of indices the agent was shown (None: any)."""
+def execute(
+    page: Page,
+    action: Action,
+    shown: set[int] | None,
+    selectors: bool = True,
+    timeout_ms: int = 3000,
+) -> None:
+    """Carry out ``action`` with the handles allowed (see :func:`resolve`)."""
     if action.kind == "done":
+        return
+    if action.kind == "wait":
+        page.wait_for_timeout(action.ms)
         return
     if action.kind == "scroll" and action.target is None:
         page.evaluate("dy => window.scrollBy(0, dy)", action.dy)
         return
     assert action.target is not None
-    loc = resolve(page, action.target, shown)
+    loc = resolve(page, action.target, shown, selectors)
     try:
         if action.kind == "click":
             point = loc.evaluate(VISIBLE_POINT_JS)

@@ -215,7 +215,8 @@ def click_menu(ctx: OracleContext) -> Iterator[Step]:
     path = ctx.utterance.removeprefix("Select ").split(">")
     for depth, name in enumerate(path):
         chain = " > ".join(["#menu"] + ["li > ul"] * depth)
-        # Hover-driven jQuery UI menu: clicking an item with a submenu opens it.
+        # Submenus open on hover; a click on a parent item selects it and ends the episode, so
+        # only one-level paths succeed (ORACLE_LIMITS["click-menu"]). There is no hover action.
         yield Step("click", f"{chain} > li > div:text-is({name!r})", needs=(name,), wait_ms=400)
 
 

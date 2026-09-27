@@ -67,6 +67,17 @@ def test_survival_is_a_mean_of_task_means_over_solved_episodes_only():
     # of the targets raw_html shows identifiably, how many clean_dom keeps usable
     assert clean["usable_given_raw"]["mean"] == round((1 + 1 / 3) / 2, 4)
     assert clean["usable_given_raw"]["tasks_losing_some"] == ["click-color"]
+    assert out["target_steps_without_needs"] == 0 and out["invisible_target_steps"] == {}
+
+
+def test_contrasts_are_paired_per_task_differences():
+    eps = [
+        episode("click-test", 0, [step({"raw_html", "clean_dom"})]),
+        episode("click-link", 0, [step({"raw_html", "clean_dom", "axtree"})]),
+    ]
+    contrasts = survival_summary(eps)["contrasts_usable_given_raw"]
+    assert contrasts["clean_dom - axtree"]["mean"] == 0.5  # (1 - 0 + 1 - 1) / 2
+    assert contrasts["som_listeners - som"] == {"mean": 0.0, "ci95": [0.0, 0.0]}
 
 
 def test_token_summary_reports_share_of_raw_html():

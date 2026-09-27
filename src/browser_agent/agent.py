@@ -18,34 +18,40 @@ from dataclasses import asdict, dataclass
 from pathlib import Path
 from typing import Any
 
-from browser_agent.actions import ActionError, execute, parse_action
+from playwright.sync_api import Error as PlaywrightError
+
+from browser_agent.actions import MAX_WAIT_MS, ActionError, execute, parse_action
 from browser_agent.encoders import ENCODERS, Encoding
 from browser_agent.env import MiniWoBEnv
-from browser_agent.harness import SETTLE_MS, load_jsonl
+from browser_agent.harness import load_jsonl
 from browser_agent.llm import ChatClient, Message
 from browser_agent.tokens import count_tokens
 
 DEFAULT_NUM_CTX = 16384
 REPLY_TOKENS = 256
 TEMPLATE_OVERHEAD = 32  # Qwen chat-template tokens around two messages, rounded up
+# After each action, before the next observation: long enough for the jQuery UI animations
+# (accordion, datepicker) the oracle waits 400-600 ms for.
+SETTLE_MS = 600
 
-SYSTEM = """You operate a web page to complete a task. Each turn you get the task, your \
+SYSTEM = f"""You operate a web page to complete a task. Each turn you get the task, your \
 previous actions with their results, and the current page. Reply with exactly one action as a \
 JSON object and nothing else:
-{"action": "click", "target": T}
-{"action": "type", "target": T, "text": "..."}         (replaces the field's contents)
-{"action": "select", "target": T, "options": ["label"]} (list every label to select)
-{"action": "scroll", "target": T, "dy": 100}           (target null scrolls the window)
-{"action": "submit", "target": T}                      (presses Enter in T)
-{"action": "done"}                                     (only when the task is complete)
+{{"action": "click", "target": T}}
+{{"action": "type", "target": T, "text": "..."}}         (replaces the field's contents)
+{{"action": "select", "target": T, "options": ["label"]}} (list every label to select)
+{{"action": "scroll", "target": T, "dy": 100}}           (target null scrolls the window)
+{{"action": "submit", "target": T}}                      (presses Enter in T)
+{{"action": "wait", "ms": 1000}}                         (at most {MAX_WAIT_MS} ms)
+{{"action": "done"}}                                     (only when the task is complete)
 """
 
 TARGET_HELP = {
     "raw_html": "T is a CSS selector that matches exactly one element of the HTML below.",
-    "clean_dom": "T is the number in an element's i=N attribute, or a CSS selector.",
-    "axtree": "T is the number in square brackets at the end of a line, e.g. [12].",
-    "som": "T is the number in square brackets at the start of a line, e.g. [12].",
-    "som_listeners": "T is the number in square brackets at the start of a line, e.g. [12].",
+    "clean_dom": "T is the number in an element's i=N attribute, e.g. 12.",
+    "axtree": "T is the number in square brackets at the end of a line, e.g. 12 for [12].",
+    "som": "T is the number in square brackets at the start of a line, e.g. 12 for [12].",
+    "som_listeners": "T is the number in square brackets at the start of a line, e.g. 12 for [12].",
 }
 
 PAGE_LABEL = {
@@ -93,6 +99,7 @@ class AgentEpisode:
     action_errors: int
     context_overflow: bool
     history: list[str]
+    error: str | None = None  # the browser failed under the episode (not the model's fault)
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -108,57 +115,50 @@ def run_agent_episode(
     num_ctx: int = DEFAULT_NUM_CTX,
 ) -> AgentEpisode:
     encode = ENCODERS[encoder]
-    snap = env.reset(task, seed)
-    assert env.page is not None
-    history: list[str] = []
-    tokens_used = invalid = errors = steps = 0
-    overflow = False
-    for _ in range(max_steps):
-        enc = encode(snap)
-        messages = build_messages(snap.utterance, history, enc)
-        n_prompt = prompt_tokens(messages)
-        if n_prompt + REPLY_TOKENS > num_ctx:
-            overflow = True
-            break
-        reply = client.chat(messages, options_for(num_ctx))
-        tokens_used += n_prompt
-        steps += 1
-        try:
-            action = parse_action(reply)
-        except ActionError as exc:
-            invalid += 1
-            history.append(f"{reply.strip()[:120]!r} -> invalid reply: {exc}")
-            continue
-        if action.kind == "done":
-            history.append("done")
-            break
-        try:
-            execute(env.page, action, shown=enc.handles)
-            history.append(f"{action.describe()} -> ok")
-        except ActionError as exc:
-            errors += 1
-            history.append(f"{action.describe()} -> error: {exc}")
-        env.page.wait_for_timeout(SETTLE_MS)
-        if env.outcome().done:
-            break
-        snap = env.observe()
-    outcome = env.outcome()
-    return AgentEpisode(
-        task=task,
-        seed=seed,
-        encoder=encoder,
-        model=client.model,
-        success=outcome.done and outcome.raw_reward > 0,
-        raw_reward=outcome.raw_reward,
-        done=outcome.done,
-        steps=steps,
-        max_steps=max_steps,
-        prompt_tokens=tokens_used,
-        invalid_replies=invalid,
-        action_errors=errors,
-        context_overflow=overflow,
-        history=history,
+    # Indexed encodings are acted on by the indices they show; raw HTML only by selectors.
+    by_selector = encoder == "raw_html"
+    episode = AgentEpisode(
+        task, seed, encoder, client.model, False, 0.0, False, 0, max_steps, 0, 0, 0, False, []
     )
+    history = episode.history
+    try:
+        snap = env.reset(task, seed)
+        assert env.page is not None
+        for _ in range(max_steps):
+            enc = encode(snap)
+            messages = build_messages(snap.utterance, history, enc)
+            n_prompt = prompt_tokens(messages)
+            if n_prompt + REPLY_TOKENS > num_ctx:
+                episode.context_overflow = True
+                break
+            reply = client.chat(messages, options_for(num_ctx))
+            episode.prompt_tokens += n_prompt
+            episode.steps += 1
+            try:
+                action = parse_action(reply)
+            except ActionError as exc:
+                episode.invalid_replies += 1
+                history.append(f"{reply.strip()[:120]!r} -> invalid reply: {exc}")
+                continue
+            if action.kind == "done":
+                history.append("done")
+                break
+            try:
+                execute(env.page, action, shown=enc.handles, selectors=by_selector)
+                history.append(f"{action.describe()} -> ok")
+            except ActionError as exc:
+                episode.action_errors += 1
+                history.append(f"{action.describe()} -> error: {exc}")
+            env.page.wait_for_timeout(SETTLE_MS)
+            if env.outcome().done:
+                break
+            snap = env.observe()
+        outcome = env.outcome()
+        episode.done, episode.raw_reward = outcome.done, outcome.raw_reward
+        episode.success = outcome.done and outcome.raw_reward > 0
+    except PlaywrightError as exc:
+        episode.error = str(exc).strip().splitlines()[0] if str(exc).strip() else "PlaywrightError"
+    return episode
 
 
 # ---- job planning --------------------------------------------------------------------------

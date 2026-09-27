@@ -1,7 +1,7 @@
 [project]
 name = "browser-agent"
 version = "0.1.0"
-description = "A Playwright browser agent over MiniWoB++ with four pluggable observation encoders, and what each encoder throws away."
+description = "A Playwright browser agent over MiniWoB++ with five pluggable observation encoders, and what each encoder throws away."
 readme = "README.md"
 requires-python = ">=3.11"
 license = { text = "MIT" }

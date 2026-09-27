@@ -53,3 +53,11 @@ def test_rejects_malformed_actions_with_a_reason(payload, message):
 def test_describe_is_readable_history():
     assert Action("type", 4, text="bob").describe() == "type 4 text='bob'"
     assert Action("select", "#o", options=("A",)).describe() == "select '#o' options=['A']"
+
+
+def test_wait_is_bounded_and_takes_no_target():
+    assert parse_action({"action": "wait"}) == Action("wait", ms=1000)
+    assert parse_action({"action": "wait", "ms": 0, "target": 4}) == Action("wait", ms=0)
+    for bad in (-1, 5001, "1s", True):
+        with pytest.raises(ActionError, match="wait needs"):
+            parse_action({"action": "wait", "ms": bad})

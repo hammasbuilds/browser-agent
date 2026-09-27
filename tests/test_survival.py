@@ -82,3 +82,21 @@ def test_clicking_inside_a_link_reaches_it():
     word = snap.visible_text(link)
     assert check(encode_all(snap)["axtree"], snap, link, (word,)).identifiable
     assert by_text(snap, "span", word) == link
+
+
+def test_an_index_or_markup_never_counts_as_evidence():
+    snap = load_snapshot("click-color-0")
+    (white,) = [n.id for n in snap.nodes.values() if n.attr("data-color") == "white"]
+    listed = encode_all(snap)["som_listeners"]
+    assert f"[{white}]<div></div>" in listed.text
+    assert not check(listed, snap, white, (str(white),)).identifiable
+    assert not check(listed, snap, white, (">",)).identifiable
+    assert check(listed, snap, white, ("div",)).identifiable  # the tag itself is content
+
+
+def test_needs_match_whole_tokens_only():
+    snap = snap_of(node(1, -1, "button", ["15 items"]))
+    enc = Encoding("clean_dom", "", [Fragment(1, "button 15 items", 1)])
+    assert check(enc, snap, 1, ("15",)).identifiable
+    assert not check(enc, snap, 1, ("5",)).identifiable
+    assert not check(enc, snap, 1, ("item",)).identifiable

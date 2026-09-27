@@ -45,8 +45,10 @@ def enter_text_2(ctx: OracleContext) -> Iterator[Step]:
 @oracle("enter-password")
 def enter_password(ctx: OracleContext) -> Iterator[Step]:
     (password,) = ctx.quoted()
-    yield Step("type", "#password", needs=("password",), text=password)
-    yield Step("type", "#verify", needs=("verify",), text=password)
+    # "into both text fields": either field will do for either value, so nothing is needed to
+    # tell them apart beyond being a text field.
+    yield Step("type", "#password", text=password)
+    yield Step("type", "#verify", text=password)
     yield Step("click", "#subbtn", needs=("submit",))
 
 

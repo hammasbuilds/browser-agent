@@ -117,6 +117,13 @@ def token_summary(episodes: list[Episode]) -> dict[str, Any]:
 CLEANERS = [n for n in ENCODERS if n != "raw_html"]
 # Every pair of cleaners except som + som_listeners, where one contains the other by design.
 PAIRS = [p for p in combinations(CLEANERS, 2) if set(p) != {"som", "som_listeners"}]
+# Paired comparisons (first minus second) whose per-task differences are bootstrapped.
+CONTRASTS = [
+    ("som_listeners", "som"),
+    ("clean_dom", "axtree"),
+    ("som_listeners", "axtree"),
+    ("clean_dom", "som_listeners"),
+]
 
 
 def _usable(step: dict[str, Any], name: str) -> bool:
@@ -136,8 +143,10 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
     # task -> encoder -> list of 0/1 per episode: every target identifiable and reachable
     ceiling: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
     examples: dict[str, dict[str, dict[str, Any]]] = defaultdict(dict)
+    invisible: dict[str, int] = defaultdict(int)
     for ep in solved:
         targeted = [s for s in ep["steps"] if s["checks"]]
+        invisible[ep["task"]] += sum(1 for s in targeted if s["target_visible"] is False)
         for name in ENCODERS:
             ok_all = True
             for step in targeted:
@@ -170,6 +179,10 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
         "keeps identifiable and reachable by an index (raw_html: by any selector)",
         "tasks": len(tasks),
         "target_steps": sum(len(cells[t]["raw_html"]["present"]) for t in tasks),
+        "target_steps_without_needs": sum(
+            1 for ep in solved for s in ep["steps"] if s["checks"] and not s["needs"]
+        ),
+        "invisible_target_steps": {t: n for t, n in sorted(invisible.items()) if n},
         "encoders": {},
     }
     for name in ENCODERS:
@@ -194,6 +207,10 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
         }
         entry["examples_lost"] = examples[name]
         out["encoders"][name] = entry
+    out["contrasts_usable_given_raw"] = {}
+    for a, b in CONTRASTS:
+        diffs = [mean(kept[t][a]) - mean(kept[t][b]) for t in tasks if kept[t][a] and kept[t][b]]
+        out["contrasts_usable_given_raw"][f"{a} - {b}"] = _interval(diffs)
     out["pairs_usable_given_raw"] = {}
     for a, b in PAIRS:
         pair = f"{a}+{b}"

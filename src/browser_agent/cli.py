@@ -76,9 +76,15 @@ def cmd_show(args: argparse.Namespace) -> int:
 
 def cmd_oracle(args: argparse.Namespace) -> int:
     from browser_agent.harness import run_oracle
-    from browser_agent.tasks import runnable_tasks
+    from browser_agent.tasks import EXCLUDED, runnable_tasks
 
-    tasks = args.tasks.split(",") if args.tasks else runnable_tasks()
+    runnable = runnable_tasks()
+    tasks = args.tasks.split(",") if args.tasks else runnable
+    for task in tasks:
+        if task not in runnable:
+            reason = EXCLUDED.get(task)
+            why = f"out of the action space ({reason})" if reason else "not a MiniWoB++ task"
+            raise SystemExit(f"no oracle for {task!r}: {why}; see `browser-agent tasks`")
 
     def progress(r) -> None:
         mark = "ok " if r.success else "FAIL"
@@ -131,6 +137,8 @@ def cmd_agent(args: argparse.Namespace) -> int:
         raise SystemExit(f"{oracle_path} not found; the model arm budgets steps from it")
     tasks = args.tasks.split(",") if args.tasks else None
     jobs = plan_jobs(load_jsonl(oracle_path), _encoders(args.encoder), _seeds(args.seeds), tasks)
+    if not jobs:
+        raise SystemExit("no jobs: no oracle-solved episode matches those tasks and seeds")
     if args.dry_run:
         by_encoder: dict[str, list] = {}
         for job in jobs:

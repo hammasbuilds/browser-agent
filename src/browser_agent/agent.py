@@ -264,8 +264,7 @@ def run_jobs(
     if not pending:
         return results
     browser = contextlib.nullcontext(env) if env is not None else MiniWoBEnv()
-    with browser as env, out.open("a", encoding="utf-8", newline="
-") as fh:
+    with browser as env, out.open("a", encoding="utf-8", newline="\n") as fh:
         for job in pending:
             episode = run_agent_episode(
                 env, client, job.task, job.seed, job.encoder, job.max_steps, num_ctx

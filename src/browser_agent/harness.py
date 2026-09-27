@@ -158,8 +158,7 @@ def run_oracle(
     done = {(e["task"], e["seed"]) for e in load_jsonl(out, repair=True)} if out.exists() else set()
     out.parent.mkdir(parents=True, exist_ok=True)
     records: list[EpisodeRecord] = []
-    with MiniWoBEnv() as env, out.open("a", encoding="utf-8", newline="
-") as fh:
+    with MiniWoBEnv() as env, out.open("a", encoding="utf-8", newline="\n") as fh:
         for task in tasks:
             for seed in seeds:
                 if (task, seed) in done:
@@ -194,6 +193,5 @@ def load_jsonl(path: Path, repair: bool = False) -> list[dict]:
                 raise ValueError(f"{path}: line {i + 1} is not JSON") from None
             if repair:
                 keep = "".join(json.dumps(r) + "\n" for r in records)
-                path.write_text(keep, encoding="utf-8", newline="
-")
+                path.write_text(keep, encoding="utf-8", newline="\n")
     return records

@@ -137,7 +137,7 @@ def cmd_report(args: argparse.Namespace) -> int:
         f" {oracle['episode_success_rate']:.1%} of {oracle['episodes']} episodes"
     )
     print(
-        f"\n{'encoder':<14}{'tokens (median)':>16}{'present':>10}{'identif.':>10}"
+        f"\n{'encoder':<20}{'tokens (median)':>16}{'present':>10}{'identif.':>10}"
         f"{'action.':>10}{'ceiling':>10}"
     )
     for name in ENCODERS:
@@ -180,7 +180,7 @@ def cmd_agent(args: argparse.Namespace) -> int:
             upper = sum(j.max_steps for j in js)
             toks = sum(j.oracle_prompt_tokens for j in js)
             print(
-                f"  {name:<14} {len(js):>5} episodes  calls: ~{expected} expected,"
+                f"  {name:<20} {len(js):>5} episodes  calls: ~{expected} expected,"
                 f" {upper} at most  prompt tokens at oracle length: ~{toks:,}"
             )
         total_expected = sum(j.oracle_steps + 1 for j in jobs)

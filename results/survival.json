@@ -1,0 +1,1737 @@
+{
+ "unit": "per-task mean over target steps in oracle-solved episodes; CI bootstraps tasks",
+ "usable_given_raw": "of the targets raw_html shows identifiably, the share this encoding keeps identifiable and reachable by an index (raw_html: by any selector)",
+ "tasks": 101,
+ "target_steps": 5737,
+ "encoders": {
+  "raw_html": {
+   "present": {
+    "mean": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "tasks_below_1": []
+   },
+   "identifiable": {
+    "mean": 0.9441,
+    "ci95": [
+     0.9046,
+     0.9786
+    ],
+    "tasks_below_1": [
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "multi-layouts",
+     "multi-orderings",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some"
+    ]
+   },
+   "actionable": {
+    "mean": 0.5734,
+    "ci95": [
+     0.4889,
+     0.6543
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "choose-date",
+     "choose-date-easy",
+     "choose-date-medium",
+     "choose-date-nodelay",
+     "choose-list",
+     "click-button",
+     "click-collapsible-2",
+     "click-collapsible-2-nodelay",
+     "click-color",
+     "click-dialog",
+     "click-dialog-2",
+     "click-link",
+     "click-menu-2",
+     "click-scroll-list",
+     "click-shades",
+     "click-shape",
+     "click-tab-2",
+     "click-tab-2-easy",
+     "click-tab-2-hard",
+     "click-tab-2-medium",
+     "click-widget",
+     "count-shape",
+     "count-sides",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "form-sequence-2",
+     "form-sequence-3",
+     "identify-shape",
+     "multi-layouts",
+     "multi-orderings",
+     "navigate-tree",
+     "number-checkboxes",
+     "odd-or-even",
+     "order-food",
+     "phone-book",
+     "search-engine",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "unicode-test",
+     "use-autocomplete",
+     "use-autocomplete-nodelay",
+     "use-spinner"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "tasks": 101,
+    "tasks_losing_some": []
+   },
+   "episode_ceiling": {
+    "mean": 0.9144,
+    "ci95": [
+     0.8594,
+     0.9639
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 1.0
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.8262
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 1.0
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8929
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.9667
+    }
+   },
+   "examples_lost": {
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": true
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    }
+   }
+  },
+  "clean_dom": {
+   "present": {
+    "mean": 0.9179,
+    "ci95": [
+     0.8717,
+     0.9584
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal"
+    ]
+   },
+   "identifiable": {
+    "mean": 0.8692,
+    "ci95": [
+     0.8121,
+     0.9178
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "multi-layouts",
+     "multi-orderings",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal",
+     "use-spinner"
+    ]
+   },
+   "actionable": {
+    "mean": 0.9179,
+    "ci95": [
+     0.8717,
+     0.9584
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 0.9251,
+    "ci95": [
+     0.8775,
+     0.9654
+    ],
+    "tasks": 101,
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "terminal",
+     "use-spinner"
+    ]
+   },
+   "episode_ceiling": {
+    "mean": 0.804,
+    "ci95": [
+     0.7267,
+     0.8762
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 0.8499
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.6818
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 0.9625
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8929
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.9017
+    }
+   },
+   "examples_lost": {
+    "click-color": {
+     "seed": 0,
+     "utterance": "Click on the white colored box.",
+     "needs": [
+      "white"
+     ],
+     "present": false
+    },
+    "click-shades": {
+     "seed": 0,
+     "utterance": "Select all the shades of blue and press Submit.",
+     "needs": [
+      "blue"
+     ],
+     "present": false
+    },
+    "click-shape": {
+     "seed": 1,
+     "utterance": "Click on a rectangle",
+     "needs": [
+      "rect"
+     ],
+     "present": false
+    },
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "use-spinner": {
+     "seed": 0,
+     "utterance": "Select 5 with the spinner and hit Submit.",
+     "needs": [
+      "up"
+     ],
+     "present": true
+    },
+    "ascending-numbers": {
+     "seed": 0,
+     "utterance": "Click on the numbers in ascending order.",
+     "needs": [],
+     "present": false
+    },
+    "find-greatest": {
+     "seed": 0,
+     "utterance": "Find and pick the card with the greatest number, then press submit.",
+     "needs": [
+      "17"
+     ],
+     "present": false
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "email-inbox": {
+     "seed": 0,
+     "utterance": "Find the email by Deva and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": false
+    },
+    "email-inbox-delete": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the trash icon to delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": false
+    },
+    "email-inbox-important": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": false
+    },
+    "email-inbox-nl-turk": {
+     "seed": 0,
+     "utterance": "Locate Elwira's email and delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": false
+    },
+    "email-inbox-noscroll": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": false
+    },
+    "email-inbox-star-reply": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": false
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": true
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": false
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": false
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": false
+    },
+    "terminal": {
+     "seed": 0,
+     "utterance": "Use the terminal below to delete a file ending with the extension .py",
+     "needs": [],
+     "present": false
+    }
+   }
+  },
+  "axtree": {
+   "present": {
+    "mean": 0.9641,
+    "ci95": [
+     0.9267,
+     0.9921
+    ],
+    "tasks_below_1": [
+     "click-color",
+     "click-shades",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "identifiable": {
+    "mean": 0.836,
+    "ci95": [
+     0.7731,
+     0.8903
+    ],
+    "tasks_below_1": [
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "enter-password",
+     "grid-coordinate",
+     "login-user",
+     "login-user-popup",
+     "multi-layouts",
+     "multi-orderings",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "actionable": {
+    "mean": 0.9641,
+    "ci95": [
+     0.9267,
+     0.9921
+    ],
+    "tasks_below_1": [
+     "click-color",
+     "click-shades",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 0.8919,
+    "ci95": [
+     0.8377,
+     0.9392
+    ],
+    "tasks": 101,
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "enter-password",
+     "grid-coordinate",
+     "login-user",
+     "login-user-popup",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "episode_ceiling": {
+    "mean": 0.7292,
+    "ci95": [
+     0.6406,
+     0.8074
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 0.8499
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.654
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 0.8672
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8929
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.8667
+    }
+   },
+   "examples_lost": {
+    "click-color": {
+     "seed": 0,
+     "utterance": "Click on the white colored box.",
+     "needs": [
+      "white"
+     ],
+     "present": false
+    },
+    "click-shades": {
+     "seed": 0,
+     "utterance": "Select all the shades of blue and press Submit.",
+     "needs": [
+      "blue"
+     ],
+     "present": false
+    },
+    "click-shape": {
+     "seed": 1,
+     "utterance": "Click on a rectangle",
+     "needs": [
+      "rect"
+     ],
+     "present": true
+    },
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "enter-password": {
+     "seed": 0,
+     "utterance": "Enter the password \"rUT3X\" into both text fields and press submit.",
+     "needs": [
+      "password"
+     ],
+     "present": true
+    },
+    "login-user": {
+     "seed": 0,
+     "utterance": "Enter the username \"thaddeus\" and the password \"UT\" into the text fields and press login.",
+     "needs": [
+      "username"
+     ],
+     "present": true
+    },
+    "login-user-popup": {
+     "seed": 0,
+     "utterance": "Enter the username \"thaddeus\" and the password \"UT\" into the text fields and press login.",
+     "needs": [
+      "username"
+     ],
+     "present": true
+    },
+    "use-spinner": {
+     "seed": 0,
+     "utterance": "Select 5 with the spinner and hit Submit.",
+     "needs": [
+      "up"
+     ],
+     "present": false
+    },
+    "grid-coordinate": {
+     "seed": 0,
+     "utterance": "Click on the grid coordinate (1,-2).",
+     "needs": [
+      "(1,-2)"
+     ],
+     "present": true
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "tic-tac-toe": {
+     "seed": 0,
+     "utterance": "Playing as 'X', win a game of tic-tac-toe.",
+     "needs": [],
+     "present": false
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "email-inbox": {
+     "seed": 0,
+     "utterance": "Find the email by Deva and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-delete": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the trash icon to delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": true
+    },
+    "email-inbox-forward": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and forward that email to Theresita.",
+     "needs": [
+      "send"
+     ],
+     "present": true
+    },
+    "email-inbox-forward-nl": {
+     "seed": 0,
+     "utterance": "Please find the message by Andria, then send it to Loralee.",
+     "needs": [
+      "send"
+     ],
+     "present": true
+    },
+    "email-inbox-forward-nl-turk": {
+     "seed": 0,
+     "utterance": "I'd like to email Tammi the email I got from Elwira.",
+     "needs": [
+      "send"
+     ],
+     "present": true
+    },
+    "email-inbox-important": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-nl-turk": {
+     "seed": 0,
+     "utterance": "Locate Elwira's email and delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": true
+    },
+    "email-inbox-noscroll": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-reply": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and reply to them with the text \"Mi enim sapien, massa.\".",
+     "needs": [
+      "send"
+     ],
+     "present": true
+    },
+    "email-inbox-star-reply": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": true
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    }
+   }
+  },
+  "som": {
+   "present": {
+    "mean": 0.879,
+    "ci95": [
+     0.8202,
+     0.9319
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "email-inbox",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "form-sequence-3",
+     "grid-coordinate",
+     "navigate-tree",
+     "order-food",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal",
+     "tic-tac-toe"
+    ]
+   },
+   "identifiable": {
+    "mean": 0.8126,
+    "ci95": [
+     0.7461,
+     0.8724
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "form-sequence-3",
+     "grid-coordinate",
+     "multi-layouts",
+     "multi-orderings",
+     "navigate-tree",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "actionable": {
+    "mean": 0.879,
+    "ci95": [
+     0.8202,
+     0.9319
+    ],
+    "tasks_below_1": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "email-inbox",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "form-sequence-3",
+     "grid-coordinate",
+     "navigate-tree",
+     "order-food",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal",
+     "tic-tac-toe"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 0.8625,
+    "ci95": [
+     0.8011,
+     0.9183
+    ],
+    "tasks": 101,
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "form-sequence-3",
+     "grid-coordinate",
+     "navigate-tree",
+     "social-media",
+     "terminal",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "episode_ceiling": {
+    "mean": 0.7104,
+    "ci95": [
+     0.6233,
+     0.7936
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 0.8558
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.5843
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 0.9321
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8214
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.7917
+    }
+   },
+   "examples_lost": {
+    "click-color": {
+     "seed": 0,
+     "utterance": "Click on the white colored box.",
+     "needs": [
+      "white"
+     ],
+     "present": false
+    },
+    "click-shades": {
+     "seed": 0,
+     "utterance": "Select all the shades of blue and press Submit.",
+     "needs": [
+      "blue"
+     ],
+     "present": false
+    },
+    "click-shape": {
+     "seed": 4,
+     "utterance": "Click on a blue 5",
+     "needs": [
+      "blue",
+      "5"
+     ],
+     "present": true
+    },
+    "navigate-tree": {
+     "seed": 0,
+     "utterance": "Navigate through the file tree. Find and click on the folder or file named \"Emile\".",
+     "needs": [
+      "Tora"
+     ],
+     "present": false
+    },
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "form-sequence-3": {
+     "seed": 0,
+     "utterance": "Choose 6 ft from the dropdown, then click the button labeled \"Yes\".",
+     "needs": [],
+     "present": false
+    },
+    "use-spinner": {
+     "seed": 0,
+     "utterance": "Select 5 with the spinner and hit Submit.",
+     "needs": [
+      "up"
+     ],
+     "present": true
+    },
+    "ascending-numbers": {
+     "seed": 0,
+     "utterance": "Click on the numbers in ascending order.",
+     "needs": [
+      "1"
+     ],
+     "present": false
+    },
+    "find-greatest": {
+     "seed": 0,
+     "utterance": "Find and pick the card with the greatest number, then press submit.",
+     "needs": [
+      "17"
+     ],
+     "present": true
+    },
+    "grid-coordinate": {
+     "seed": 0,
+     "utterance": "Click on the grid coordinate (1,-2).",
+     "needs": [
+      "(1,-2)"
+     ],
+     "present": false
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "tic-tac-toe": {
+     "seed": 0,
+     "utterance": "Playing as 'X', win a game of tic-tac-toe.",
+     "needs": [],
+     "present": false
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "email-inbox": {
+     "seed": 0,
+     "utterance": "Find the email by Deva and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-delete": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the trash icon to delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": true
+    },
+    "email-inbox-forward": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and forward that email to Theresita.",
+     "needs": [
+      "forward"
+     ],
+     "present": false
+    },
+    "email-inbox-forward-nl": {
+     "seed": 0,
+     "utterance": "Please find the message by Andria, then send it to Loralee.",
+     "needs": [
+      "forward"
+     ],
+     "present": false
+    },
+    "email-inbox-forward-nl-turk": {
+     "seed": 0,
+     "utterance": "I'd like to email Tammi the email I got from Elwira.",
+     "needs": [
+      "forward"
+     ],
+     "present": false
+    },
+    "email-inbox-important": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-nl-turk": {
+     "seed": 0,
+     "utterance": "Locate Elwira's email and delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": true
+    },
+    "email-inbox-noscroll": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-reply": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and reply to them with the text \"Mi enim sapien, massa.\".",
+     "needs": [
+      "reply"
+     ],
+     "present": false
+    },
+    "email-inbox-star-reply": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": false
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": false
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": false
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": false
+    },
+    "terminal": {
+     "seed": 0,
+     "utterance": "Use the terminal below to delete a file ending with the extension .py",
+     "needs": [],
+     "present": false
+    }
+   }
+  },
+  "som_listeners": {
+   "present": {
+    "mean": 0.9873,
+    "ci95": [
+     0.962,
+     1.0
+    ],
+    "tasks_below_1": [
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "identifiable": {
+    "mean": 0.8754,
+    "ci95": [
+     0.8202,
+     0.9228
+    ],
+    "tasks_below_1": [
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "multi-layouts",
+     "multi-orderings",
+     "navigate-tree",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal",
+     "use-spinner"
+    ]
+   },
+   "actionable": {
+    "mean": 0.9873,
+    "ci95": [
+     0.962,
+     1.0
+    ],
+    "tasks_below_1": [
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 0.9312,
+    "ci95": [
+     0.8898,
+     0.9687
+    ],
+    "tasks": 101,
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "navigate-tree",
+     "terminal",
+     "use-spinner"
+    ]
+   },
+   "episode_ceiling": {
+    "mean": 0.8114,
+    "ci95": [
+     0.7351,
+     0.8797
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 0.8558
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.6818
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 0.9625
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8729
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.9417
+    }
+   },
+   "examples_lost": {
+    "click-color": {
+     "seed": 0,
+     "utterance": "Click on the white colored box.",
+     "needs": [
+      "white"
+     ],
+     "present": true
+    },
+    "click-shades": {
+     "seed": 0,
+     "utterance": "Select all the shades of blue and press Submit.",
+     "needs": [
+      "blue"
+     ],
+     "present": true
+    },
+    "click-shape": {
+     "seed": 4,
+     "utterance": "Click on a blue 5",
+     "needs": [
+      "blue",
+      "5"
+     ],
+     "present": true
+    },
+    "navigate-tree": {
+     "seed": 1,
+     "utterance": "Navigate through the file tree. Find and click on the folder or file named \"Livia\".",
+     "needs": [
+      "Livia"
+     ],
+     "present": false
+    },
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "use-spinner": {
+     "seed": 0,
+     "utterance": "Select 5 with the spinner and hit Submit.",
+     "needs": [
+      "up"
+     ],
+     "present": true
+    },
+    "find-greatest": {
+     "seed": 0,
+     "utterance": "Find and pick the card with the greatest number, then press submit.",
+     "needs": [
+      "17"
+     ],
+     "present": true
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "email-inbox": {
+     "seed": 0,
+     "utterance": "Find the email by Deva and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-delete": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the trash icon to delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": true
+    },
+    "email-inbox-important": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-nl-turk": {
+     "seed": 0,
+     "utterance": "Locate Elwira's email and delete it.",
+     "needs": [
+      "trash"
+     ],
+     "present": true
+    },
+    "email-inbox-noscroll": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "email-inbox-star-reply": {
+     "seed": 0,
+     "utterance": "Find the email by Celestyn and click the star icon to mark it as important.",
+     "needs": [
+      "star"
+     ],
+     "present": true
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": true
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "terminal": {
+     "seed": 0,
+     "utterance": "Use the terminal below to delete a file ending with the extension .py",
+     "needs": [],
+     "present": false
+    }
+   }
+  }
+ },
+ "pairs_usable_given_raw": {
+  "clean_dom+axtree": {
+   "mean": 0.9479,
+   "ci95": [
+    0.9092,
+    0.9796
+   ],
+   "tasks_losing_some": [
+    "click-color",
+    "click-shades",
+    "click-shape",
+    "email-inbox",
+    "email-inbox-delete",
+    "email-inbox-important",
+    "email-inbox-nl-turk",
+    "email-inbox-noscroll",
+    "email-inbox-star-reply",
+    "use-spinner"
+   ]
+  },
+  "clean_dom+som": {
+   "mean": 0.9261,
+   "ci95": [
+    0.8795,
+    0.9662
+   ],
+   "tasks_losing_some": [
+    "ascending-numbers",
+    "click-color",
+    "click-shades",
+    "click-shape",
+    "email-inbox",
+    "email-inbox-delete",
+    "email-inbox-important",
+    "email-inbox-nl-turk",
+    "email-inbox-noscroll",
+    "email-inbox-star-reply",
+    "find-greatest",
+    "terminal",
+    "use-spinner"
+   ]
+  },
+  "clean_dom+som_listeners": {
+   "mean": 0.934,
+   "ci95": [
+    0.8935,
+    0.9706
+   ],
+   "tasks_losing_some": [
+    "click-color",
+    "click-shades",
+    "click-shape",
+    "email-inbox",
+    "email-inbox-delete",
+    "email-inbox-important",
+    "email-inbox-nl-turk",
+    "email-inbox-noscroll",
+    "email-inbox-star-reply",
+    "find-greatest",
+    "terminal",
+    "use-spinner"
+   ]
+  },
+  "axtree+som": {
+   "mean": 0.929,
+   "ci95": [
+    0.8828,
+    0.9693
+   ],
+   "tasks_losing_some": [
+    "click-color",
+    "click-shades",
+    "click-shape",
+    "email-inbox",
+    "email-inbox-delete",
+    "email-inbox-important",
+    "email-inbox-nl-turk",
+    "email-inbox-noscroll",
+    "email-inbox-star-reply",
+    "grid-coordinate",
+    "tic-tac-toe",
+    "use-spinner"
+   ]
+  },
+  "axtree+som_listeners": {
+   "mean": 0.9488,
+   "ci95": [
+    0.9106,
+    0.9805
+   ],
+   "tasks_losing_some": [
+    "click-color",
+    "click-shades",
+    "click-shape",
+    "email-inbox",
+    "email-inbox-delete",
+    "email-inbox-important",
+    "email-inbox-nl-turk",
+    "email-inbox-noscroll",
+    "email-inbox-star-reply",
+    "use-spinner"
+   ]
+  }
+ }
+}

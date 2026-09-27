@@ -162,6 +162,22 @@ EXCLUDED: dict[str, str] = {
 }
 
 
+# In-scope tasks the oracle cannot solve on every seed, and why (investigated, not guessed).
+ORACLE_LIMITS: dict[str, str] = {
+    "click-menu": "submenus open on hover; clicking a parent item selects it and ends the "
+    "episode, so only top-level targets are reachable by click",
+    "click-pie": "when the answer is the item the wheel starts on, wheelnav keeps re-inserting "
+    "its title under the pointer and the click lands on the <svg>",
+    "click-pie-nodelay": "as click-pie",
+    "stock-market": "the price can stay under the threshold for 400 ms, less than one "
+    "observe-and-encode cycle on a loaded machine",
+    "button-delay": "a 1 s wait with a 150 ms tolerance, measured across an observe-and-encode "
+    "cycle whose length depends on machine load",
+    "choose-date-medium": "load-dependent: a datepicker animation outlasted the 3 s hover "
+    "timeout once; the same seed passes on a rerun",
+}
+
+
 def family_of(task: str) -> str:
     for family, tasks in FAMILIES.items():
         if task in tasks:

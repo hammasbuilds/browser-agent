@@ -12,11 +12,12 @@ is one that provably had to be acted on.
 from __future__ import annotations
 
 from collections import defaultdict
+from itertools import combinations
 from typing import Any
 
 from browser_agent.encoders import ENCODERS
 from browser_agent.stats import bootstrap_mean_ci, mean, quantile, wilson
-from browser_agent.tasks import family_of
+from browser_agent.tasks import ORACLE_LIMITS, family_of
 
 LEVELS = ("present", "identifiable", "actionable")
 Episode = dict[str, Any]
@@ -60,6 +61,8 @@ def oracle_summary(episodes: list[Episode]) -> dict[str, Any]:
             "steps_mean": round(mean([len(e["steps"]) for e in eps]), 2),
             "failures": failures[:5],
         }
+        if failures:
+            per_task[task]["explanation"] = ORACLE_LIMITS.get(task, "UNEXPLAINED")
     rates = [t["rate"] for t in per_task.values()]
     return {
         "tasks": len(per_task),
@@ -111,6 +114,17 @@ def token_summary(episodes: list[Episode]) -> dict[str, Any]:
 # ---- survival ------------------------------------------------------------------------------
 
 
+CLEANERS = [n for n in ENCODERS if n != "raw_html"]
+# Every pair of cleaners except som + som_listeners, where one contains the other by design.
+PAIRS = [p for p in combinations(CLEANERS, 2) if set(p) != {"som", "som_listeners"}]
+
+
+def _usable(step: dict[str, Any], name: str) -> bool:
+    """Identifiable, and reachable: by an index, or for raw_html by any CSS selector."""
+    check = step["checks"][name]
+    return check["identifiable"] and (check["actionable"] or name == "raw_html")
+
+
 def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
     solved = [e for e in episodes if _success(e)]
     # task -> encoder -> level -> list of 0/1 over target steps
@@ -130,10 +144,9 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
                 check = step["checks"][name]
                 for level in LEVELS:
                     cells[ep["task"]][name][level].append(int(check[level]))
+                usable = _usable(step, name)
                 if step["checks"]["raw_html"]["identifiable"]:
-                    usable = check["identifiable"] and (check["actionable"] or name == "raw_html")
                     kept[ep["task"]][name].append(int(usable))
-                usable = check["identifiable"] and (check["actionable"] or name == "raw_html")
                 ok_all = ok_all and usable
                 if not check["identifiable"] and ep["task"] not in examples[name]:
                     examples[name][ep["task"]] = {
@@ -144,6 +157,11 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
                     }
             if targeted:
                 ceiling[ep["task"]][name].append(int(ok_all))
+        for a, b in PAIRS:
+            for step in targeted:
+                if step["checks"]["raw_html"]["identifiable"]:
+                    either = _usable(step, a) or _usable(step, b)
+                    kept[ep["task"]][f"{a}+{b}"].append(int(either))
 
     tasks = sorted(cells)
     out: dict[str, Any] = {
@@ -176,6 +194,14 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
         }
         entry["examples_lost"] = examples[name]
         out["encoders"][name] = entry
+    out["pairs_usable_given_raw"] = {}
+    for a, b in PAIRS:
+        pair = f"{a}+{b}"
+        by_task = {t: mean(kept[t][pair]) for t in tasks if kept[t][pair]}
+        out["pairs_usable_given_raw"][pair] = _interval(list(by_task.values()))
+        out["pairs_usable_given_raw"][pair]["tasks_losing_some"] = sorted(
+            t for t, v in by_task.items() if v < 1
+        )
     return out
 
 

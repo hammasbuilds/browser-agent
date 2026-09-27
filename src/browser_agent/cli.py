@@ -205,7 +205,7 @@ def build_parser() -> argparse.ArgumentParser:
 
     agent = sub.add_parser("agent", help="run (or --dry-run) the model arm")
     agent.add_argument("--encoder", default="all", help="comma list or 'all'")
-    agent.add_argument("--seeds", type=int, default=10, help="seeds 0..N-1 (default 10)")
+    agent.add_argument("--seeds", type=int, default=5, help="seeds 0..N-1 (default 5)")
     agent.add_argument("--tasks", help="comma list (default: every oracle-solved task)")
     agent.add_argument("--model", default="qwen2.5:14b-instruct")
     agent.add_argument("--url", default="http://127.0.0.1:11434")

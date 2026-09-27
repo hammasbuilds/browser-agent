@@ -1,0 +1,1308 @@
+{
+ "tasks": 101,
+ "episodes": 2020,
+ "tasks_always_solved": 96,
+ "tasks_never_solved": [],
+ "tasks_sometimes_failed": [
+  "choose-date-medium",
+  "click-menu",
+  "click-pie",
+  "click-pie-nodelay",
+  "stock-market"
+ ],
+ "episode_success_rate": 0.9876,
+ "per_task": {
+  "ascending-numbers": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 5.0,
+   "failures": []
+  },
+  "book-flight": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 9.0,
+   "failures": []
+  },
+  "book-flight-nodelay": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 9.0,
+   "failures": []
+  },
+  "button-delay": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "buy-ticket": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "choose-date": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 9.0,
+   "failures": []
+  },
+  "choose-date-easy": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "choose-date-medium": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 19,
+   "rate": 0.95,
+   "wilson95": [
+    0.7639,
+    0.9911
+   ],
+   "steps_mean": 3.5,
+   "failures": [
+    {
+     "seed": 5,
+     "raw_reward": 0.0,
+     "error": "ActionError: click 6 failed: Locator.hover: Timeout 3000ms exceeded."
+    }
+   ],
+   "explanation": "load-dependent: a datepicker animation outlasted the 3 s hover timeout once; the same seed passes on a rerun"
+  },
+  "choose-date-nodelay": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 9.0,
+   "failures": []
+  },
+  "choose-list": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-button": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-button-sequence": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-checkboxes": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.8,
+   "failures": []
+  },
+  "click-checkboxes-large": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 9.1,
+   "failures": []
+  },
+  "click-checkboxes-soft": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.2,
+   "failures": []
+  },
+  "click-checkboxes-transfer": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.4,
+   "failures": []
+  },
+  "click-collapsible": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-collapsible-2": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-collapsible-2-nodelay": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-collapsible-nodelay": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-color": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-dialog": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-dialog-2": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-link": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-menu": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 4,
+   "rate": 0.2,
+   "wilson95": [
+    0.0807,
+    0.416
+   ],
+   "steps_mean": 1.0,
+   "failures": [
+    {
+     "seed": 0,
+     "raw_reward": -1.0,
+     "error": null
+    },
+    {
+     "seed": 1,
+     "raw_reward": -1.0,
+     "error": null
+    },
+    {
+     "seed": 2,
+     "raw_reward": -1.0,
+     "error": null
+    },
+    {
+     "seed": 3,
+     "raw_reward": -1.0,
+     "error": null
+    },
+    {
+     "seed": 4,
+     "raw_reward": -1.0,
+     "error": null
+    }
+   ],
+   "explanation": "submenus open on hover; clicking a parent item selects it and ends the episode, so only top-level targets are reachable by click"
+  },
+  "click-menu-2": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.6,
+   "failures": []
+  },
+  "click-option": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-pie": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 17,
+   "rate": 0.85,
+   "wilson95": [
+    0.6396,
+    0.9476
+   ],
+   "steps_mean": 2.0,
+   "failures": [
+    {
+     "seed": 1,
+     "raw_reward": 0.0,
+     "error": null
+    },
+    {
+     "seed": 11,
+     "raw_reward": 0.0,
+     "error": null
+    },
+    {
+     "seed": 14,
+     "raw_reward": 0.0,
+     "error": null
+    }
+   ],
+   "explanation": "when the answer is the item the wheel starts on, wheelnav keeps re-inserting its title under the pointer and the click lands on the <svg>"
+  },
+  "click-pie-nodelay": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 17,
+   "rate": 0.85,
+   "wilson95": [
+    0.6396,
+    0.9476
+   ],
+   "steps_mean": 2.0,
+   "failures": [
+    {
+     "seed": 1,
+     "raw_reward": 0.0,
+     "error": null
+    },
+    {
+     "seed": 11,
+     "raw_reward": 0.0,
+     "error": null
+    },
+    {
+     "seed": 14,
+     "raw_reward": 0.0,
+     "error": null
+    }
+   ],
+   "explanation": "as click-pie"
+  },
+  "click-scroll-list": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "click-shades": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 5.05,
+   "failures": []
+  },
+  "click-shape": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-tab": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-tab-2": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.65,
+   "failures": []
+  },
+  "click-tab-2-easy": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-tab-2-hard": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.7,
+   "failures": []
+  },
+  "click-tab-2-medium": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-test": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-test-2": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-test-transfer": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "click-widget": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "copy-paste": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "copy-paste-2": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "count-shape": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "count-sides": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "email-inbox": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.7,
+   "failures": []
+  },
+  "email-inbox-delete": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "email-inbox-forward": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "email-inbox-forward-nl": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "email-inbox-forward-nl-turk": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "email-inbox-important": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "email-inbox-nl-turk": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "email-inbox-noscroll": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.7,
+   "failures": []
+  },
+  "email-inbox-reply": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "email-inbox-star-reply": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.7,
+   "failures": []
+  },
+  "enter-date": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "enter-password": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "enter-text": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "enter-text-2": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "enter-text-dynamic": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "enter-time": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "find-greatest": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "find-word": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "focus-text": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "focus-text-2": {
+   "family": "click",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "form-sequence-2": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "form-sequence-3": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "generate-number": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "grid-coordinate": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "guess-number": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 6.0,
+   "failures": []
+  },
+  "identify-shape": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "login-user": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "login-user-popup": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 5.25,
+   "failures": []
+  },
+  "multi-layouts": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "multi-orderings": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "navigate-tree": {
+   "family": "navigate",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.25,
+   "failures": []
+  },
+  "number-checkboxes": {
+   "family": "choose",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 13.85,
+   "failures": []
+  },
+  "odd-or-even": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "order-food": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.35,
+   "failures": []
+  },
+  "phone-book": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.45,
+   "failures": []
+  },
+  "read-table": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "read-table-2": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "scroll-text": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "scroll-text-2": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "search-engine": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.6,
+   "failures": []
+  },
+  "sign-agreement": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.3,
+   "failures": []
+  },
+  "simon-says": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.85,
+   "failures": []
+  },
+  "simple-algebra": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "simple-arithmetic": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "social-media": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.65,
+   "failures": []
+  },
+  "social-media-all": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.85,
+   "failures": []
+  },
+  "social-media-some": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.35,
+   "failures": []
+  },
+  "stock-market": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 18,
+   "rate": 0.9,
+   "wilson95": [
+    0.699,
+    0.9721
+   ],
+   "steps_mean": 1.0,
+   "failures": [
+    {
+     "seed": 3,
+     "raw_reward": -1.0,
+     "error": null
+    },
+    {
+     "seed": 8,
+     "raw_reward": -1.0,
+     "error": null
+    }
+   ],
+   "explanation": "the price can stay under the threshold for 400 ms, less than one observe-and-encode cycle on a loaded machine"
+  },
+  "terminal": {
+   "family": "composite",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 4.0,
+   "failures": []
+  },
+  "text-transform": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  },
+  "tic-tac-toe": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.95,
+   "failures": []
+  },
+  "unicode-test": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 1.0,
+   "failures": []
+  },
+  "use-autocomplete": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "use-autocomplete-nodelay": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 3.0,
+   "failures": []
+  },
+  "use-spinner": {
+   "family": "form",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 5.75,
+   "failures": []
+  },
+  "visual-addition": {
+   "family": "reason",
+   "episodes": 20,
+   "solved": 20,
+   "rate": 1.0,
+   "wilson95": [
+    0.8389,
+    1.0
+   ],
+   "steps_mean": 2.0,
+   "failures": []
+  }
+ }
+}

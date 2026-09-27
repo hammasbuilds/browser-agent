@@ -170,9 +170,11 @@ def phone_book(ctx: OracleContext) -> Iterator[Step]:
     for _ in range(index):
         # The pager's "next" arrow; its only text is ">".
         yield Step("click", "#pagination li.next a", needs=(">",))
-    # One contact is shown at a time; the link is picked by which property it is, a word the
-    # page keeps only in the link's class and in a neighbouring "Phone:" style caption.
-    yield Step("click", f"#contact a.{prop}", needs=(prop,))
+    # One contact is shown at a time; the link is picked by which property it is. The page
+    # names the property only in the link's class and a neighbouring "Phone:" caption, but the
+    # value itself (a phone number, an email address, a street address) says what it is.
+    (value,) = ctx.texts(f"#contact a.{prop}")
+    yield Step("click", f"#contact a.{prop}", needs=(f"{prop}|{value}",))
 
 
 # ---- login with a popup --------------------------------------------------------------------

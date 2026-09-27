@@ -12,7 +12,7 @@ cd "$(dirname "$0")/.."
 unset VIRTUAL_ENV
 
 MODEL="${MODEL:-qwen2.5:14b-instruct}"
-SEEDS="${SEEDS:-10}"
+SEEDS="${SEEDS:-5}"
 NUM_CTX="${NUM_CTX:-16384}"
 OLLAMA_URL="${OLLAMA_URL:-http://127.0.0.1:11434}"
 MIN_FREE_RAM_GB="${MIN_FREE_RAM_GB:-5}"

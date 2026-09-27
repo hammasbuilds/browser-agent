@@ -137,8 +137,8 @@ observe-and-encode cycle, and `button-delay`, whose 150 ms tolerance spans one.
 
 The findings above bound what a model *could* do with each encoding. Whether
 `qwen2.5:14b-instruct` actually does it is queued: `scripts/run_models.sh` runs every
-oracle-solved (task, seed) for seeds 0-4 under all five encodings, about 9,550 calls
-(19,100 at most), then reports success per encoding and family with Wilson intervals, steps,
+oracle-solved (task, seed) for seeds 0-4 under all five encodings, about 9,560 calls
+(19,120 at most), then reports success per encoding and family with Wilson intervals, steps,
 tokens, and success split by whether that episode's targets survived the encoding. The model
 acts only through the handles its encoding shows (indices, or CSS selectors for raw HTML), may
 `wait` up to 5 s like the oracle does, and a prompt too long for the context window is

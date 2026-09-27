@@ -61,8 +61,8 @@ was fixed (list below) and the oracle run and all results were regenerated from 
 serves the model; `--dry-run` prints the plan). Defaults: `qwen2.5:14b-instruct`, seeds 0-4,
 `num_ctx` 16384, all five encoders.
 
-- 2,485 episodes (497 oracle-solved (task, seed) pairs x 5 encoders).
-- About **9,550 calls** expected (oracle steps + 1 per episode), **19,100 at most** (budget
+- 2,490 episodes (498 oracle-solved (task, seed) pairs x 5 encoders).
+- About **9,560 calls** expected (oracle steps + 1 per episode), **19,120 at most** (budget
   2 x oracle steps + 2).
 - `SEEDS=10` doubles both. Output: `results/agent_episodes.jsonl`, `results/agent.json`.
 

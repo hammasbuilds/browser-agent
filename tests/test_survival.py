@@ -2,7 +2,7 @@ from conftest import load_snapshot
 from test_encoders import node, snap_of
 
 from browser_agent.encoders import Encoding, Fragment, encode_all
-from browser_agent.survival import activators, check, normalise
+from browser_agent.survival import activators, check, need_source, normalise
 
 
 def by_text(snap, tag, text):
@@ -100,3 +100,12 @@ def test_needs_match_whole_tokens_only():
     assert check(enc, snap, 1, ("15",)).identifiable
     assert not check(enc, snap, 1, ("5",)).identifiable
     assert not check(enc, snap, 1, ("item",)).identifiable
+
+
+def test_needs_are_tagged_by_where_an_agent_could_find_them():
+    utterance = "Find the email by Deva and delete it."
+    page = "Deva Morbi. Purus. 1h 32m"
+    assert need_source("Deva", utterance, page) == "instruction"
+    assert need_source("1h 32m", utterance, page) == "page"
+    assert need_source("trash", utterance, page) == "markup"
+    assert need_source("textarea|delete", utterance, page) == "instruction"  # any spelling

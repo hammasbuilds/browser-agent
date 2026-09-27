@@ -15,7 +15,7 @@ from collections import defaultdict
 from itertools import combinations
 from typing import Any
 
-from browser_agent.encoders import ENCODERS
+from browser_agent.encoders import ENCODERS, MAIN_ENCODERS
 from browser_agent.stats import bootstrap_mean_ci, mean, quantile, wilson
 from browser_agent.tasks import ORACLE_LIMITS, family_of
 
@@ -114,7 +114,7 @@ def token_summary(episodes: list[Episode]) -> dict[str, Any]:
 # ---- survival ------------------------------------------------------------------------------
 
 
-CLEANERS = [n for n in ENCODERS if n != "raw_html"]
+CLEANERS = [n for n in MAIN_ENCODERS if n != "raw_html"]
 # Every pair of cleaners except som + som_listeners, where one contains the other by design.
 PAIRS = [p for p in combinations(CLEANERS, 2) if set(p) != {"som", "som_listeners"}]
 # Paired comparisons (first minus second) whose per-task differences are bootstrapped.
@@ -123,13 +123,65 @@ CONTRASTS = [
     ("clean_dom", "axtree"),
     ("som_listeners", "axtree"),
     ("clean_dom", "som_listeners"),
+    ("clean_dom_wide", "clean_dom"),
+    ("som_listeners_wide", "som_listeners"),
 ]
+# Which needs count, for the sensitivity analysis (survival.need_source tags every need).
+NEED_VARIANTS = {
+    "all_needs": {"instruction", "page", "markup"},
+    "no_markup_needs": {"instruction", "page"},
+    "instruction_needs_only": {"instruction"},
+}
+
+
+def _identifiable_with(step: dict[str, Any], name: str, sources: set[str]) -> bool:
+    """Identifiable counting only the needs whose source is in ``sources``."""
+    check = step["checks"][name]
+    if not check["present"]:
+        return False
+    return all(
+        hit
+        for hit, source in zip(check["need_hits"], step["need_sources"], strict=True)
+        if source in sources
+    )
+
+
+def _usable_with(step: dict[str, Any], name: str, sources: set[str]) -> bool:
+    check = step["checks"][name]
+    reachable = check["actionable"] or name == "raw_html"
+    return _identifiable_with(step, name, sources) and reachable
+
+
+def sensitivity(solved: list[Episode], sources: set[str]) -> dict[str, Any]:
+    """``usable_given_raw`` recomputed with only the needs from ``sources`` counted."""
+    kept: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
+    for ep in solved:
+        for step in ep["steps"]:
+            if step["checks"] and _identifiable_with(step, "raw_html", sources):
+                for name in ENCODERS:
+                    kept[name][ep["task"]].append(int(_usable_with(step, name, sources)))
+    out: dict[str, Any] = {}
+    for name in ENCODERS:
+        by_task = {t: mean(v) for t, v in kept[name].items()}
+        out[name] = _interval(list(by_task.values()))
+        out[name]["tasks_losing_some"] = sorted(t for t, v in by_task.items() if v < 1)
+    return out
 
 
 def _usable(step: dict[str, Any], name: str) -> bool:
     """Identifiable, and reachable: by an index, or for raw_html by any CSS selector."""
     check = step["checks"][name]
     return check["identifiable"] and (check["actionable"] or name == "raw_html")
+
+
+def need_source_counts(solved: list[Episode]) -> dict[str, int]:
+    counts = {source: 0 for source in ("instruction", "page", "markup")}
+    for ep in solved:
+        for step in ep["steps"]:
+            if step["checks"]:
+                for source in step["need_sources"]:
+                    counts[source] += 1
+    return counts
 
 
 def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
@@ -183,6 +235,7 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
             1 for ep in solved for s in ep["steps"] if s["checks"] and not s["needs"]
         ),
         "invisible_target_steps": {t: n for t, n in sorted(invisible.items()) if n},
+        "need_sources": need_source_counts(solved),
         "encoders": {},
     }
     for name in ENCODERS:
@@ -207,6 +260,9 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
         }
         entry["examples_lost"] = examples[name]
         out["encoders"][name] = entry
+    out["sensitivity_usable_given_raw"] = {
+        variant: sensitivity(solved, sources) for variant, sources in NEED_VARIANTS.items()
+    }
     out["contrasts_usable_given_raw"] = {}
     for a, b in CONTRASTS:
         diffs = [mean(kept[t][a]) - mean(kept[t][b]) for t in tasks if kept[t][a] and kept[t][b]]
@@ -226,35 +282,44 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
 
 
 def agent_summary(agent_eps: list[Episode], oracle_eps: list[Episode]) -> dict[str, Any]:
-    """Success per encoder (macro over tasks, and per family), cost, and the survival join.
+    """Per model: success per encoder (macro over tasks, and per family), cost, and the
+    survival join.
 
     The join asks the question the non-model analysis cannot: when the oracle's targets were
-    *not* identifiable in an encoding, how often did the model still succeed with it?
+    *not* usable in an encoding (the same measure as the episode ceiling), how often did the
+    model still succeed with it? Models are never pooled.
     """
+    models = sorted({e["model"] for e in agent_eps})
+    return {
+        "models": {
+            model: _agent_model_summary([e for e in agent_eps if e["model"] == model], oracle_eps)
+            for model in models
+        }
+    }
+
+
+def _agent_model_summary(agent_eps: list[Episode], oracle_eps: list[Episode]) -> dict[str, Any]:
     oracle_by_key = {(e["task"], e["seed"]): e for e in oracle_eps}
-    # An episode whose browser failed under it says nothing about the model: counted apart.
-    broken = [e for e in agent_eps if e.get("error")]
     out: dict[str, Any] = {
-        "model": sorted({e["model"] for e in agent_eps}),
-        "browser_errors_excluded": len(broken),
+        "page_errors": sum(1 for e in agent_eps if e.get("error")),
         "encoders": {},
     }
     for name in ENCODERS:
-        eps = [e for e in agent_eps if e["encoder"] == name and not e.get("error")]
+        eps = [e for e in agent_eps if e["encoder"] == name]
         if not eps:
             continue
         per_task: dict[str, list[int]] = defaultdict(list)
         per_family: dict[str, list[int]] = defaultdict(list)
-        split: dict[str, list[int]] = {"all_targets_identifiable": [], "some_target_lost": []}
+        split: dict[str, list[int]] = {"all_targets_usable": [], "some_target_lost": []}
         for e in eps:
             per_task[e["task"]].append(int(e["success"]))
             per_family[family_of(e["task"])].append(int(e["success"]))
             oracle = oracle_by_key.get((e["task"], e["seed"]))
             if oracle is not None:
-                checks = [s["checks"][name] for s in oracle["steps"] if s["checks"]]
+                steps = [s for s in oracle["steps"] if s["checks"]]
                 key = (
-                    "all_targets_identifiable"
-                    if all(c["identifiable"] for c in checks)
+                    "all_targets_usable"
+                    if all(_usable(s, name) for s in steps)
                     else "some_target_lost"
                 )
                 split[key].append(int(e["success"]))

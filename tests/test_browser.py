@@ -4,10 +4,12 @@ import json
 import re
 
 import pytest
+from playwright.sync_api import Error as PlaywrightError
 
 from browser_agent.actions import Action, ActionError, execute
 from browser_agent.agent import Job, run_agent_episode, run_jobs
-from browser_agent.harness import load_jsonl, run_oracle_episode
+from browser_agent.encoders import ENCODERS
+from browser_agent.harness import BrowserDiedError, load_jsonl, run_oracle_episode
 from browser_agent.llm import FakeClient
 
 pytestmark = pytest.mark.browser
@@ -23,14 +25,10 @@ def test_the_oracle_solves_a_task_and_records_survival_for_every_encoder(env):
     record = run_oracle_episode(env, "login-user", 0)
     assert record.success and record.error is None
     assert [s.kind for s in record.steps] == ["type", "type", "click"]
-    assert set(record.steps[0].checks) == {
-        "raw_html",
-        "clean_dom",
-        "axtree",
-        "som",
-        "som_listeners",
-    }
+    assert set(record.steps[0].checks) == set(ENCODERS)
     assert record.steps[0].tokens["raw_html"] > record.steps[0].tokens["som"]
+    # "username" is in the instruction; every need is tagged with where it was found
+    assert record.steps[0].need_sources == ["instruction"]
 
 
 def test_a_wrong_click_gets_the_benchmarks_negative_reward(env):
@@ -124,3 +122,35 @@ def test_agent_resume_repairs_a_line_cut_off_by_a_kill(env, tmp_path):
     (row,) = load_jsonl(out)
     assert (row["task"], row["seed"], row["success"]) == ("click-test", 0, True)
     assert run_jobs(jobs, fake, out, env=env) == []  # resumes: nothing left to do
+
+
+def test_resume_keys_on_the_context_window_so_overflows_can_be_retried(env, tmp_path):
+    out = tmp_path / "agent.jsonl"
+    fake = FakeClient(_click_line(r"^\[(\d+)\]<button[^>]*>Click Me!"))
+    jobs = [Job("click-test", 0, "som", 4, 1, 0)]
+    (small,) = run_jobs(jobs, fake, out, num_ctx=300, env=env)
+    assert small.context_overflow and small.num_ctx == 300
+    (large,) = run_jobs(jobs, fake, out, env=env)  # a bigger window is a new job
+    assert large.success and large.num_ctx == 16384
+    assert run_jobs(jobs, fake, out, env=env) == []
+
+
+def test_a_page_error_is_a_recorded_failure_not_an_exclusion(env):
+    def policy(messages):
+        raise PlaywrightError("Element is not attached to the DOM")
+
+    episode = run_agent_episode(env, FakeClient(policy), "click-test", 0, "som", max_steps=2)
+    assert not episode.success and episode.error == "Element is not attached to the DOM"
+
+
+def test_a_dead_browser_stops_the_run_and_records_nothing(env, tmp_path, monkeypatch):
+    out = tmp_path / "agent.jsonl"
+
+    def policy(messages):
+        # what a crash looks like from here: the call fails and the browser is gone
+        monkeypatch.setattr(env, "alive", lambda: False)
+        raise PlaywrightError("Target page, context or browser has been closed")
+
+    with pytest.raises(BrowserDiedError):
+        run_jobs([Job("click-test", 0, "som", 2, 1, 0)], FakeClient(policy), out, env=env)
+    assert out.read_text() == ""  # nothing recorded, so a resume retries the episode

@@ -1,4 +1,4 @@
-"""Five ways to turn one :class:`Snapshot` into the text a model reads.
+"""Seven ways to turn one :class:`Snapshot` into the text a model reads.
 
 Every encoder returns an :class:`Encoding`: the text itself, plus a list of fragments saying
 which element each piece of text came from, what a reader can learn from it, and which index
@@ -19,6 +19,11 @@ angle bracket. That keeps a needed "5" from being met by ``[5]`` or a needed ">"
                    starts), each on one ``[N]<tag ...>text</tag>`` line. No other page text.
 ``som_listeners``  ``som`` plus anything Chrome reports as a click target, which catches
                    listeners attached from JavaScript (d3 ``.on``, jQuery ``.on``).
+
+The allow-list ablation: ``clean_dom_wide`` and ``som_listeners_wide`` are the same encoders
+with ``class``, ``style`` and every ``data-*`` attribute added to the allow-list. The narrow
+list is what DOM-distilling agents typically keep; the wide one measures what that choice costs
+(colour lives in ``style``, icon identity in ``class``) and what keeping it costs in tokens.
 """
 
 from __future__ import annotations
@@ -41,6 +46,7 @@ KEEP_ATTRS = (
     "alt",
     "for",
 )
+WIDE_ATTRS = ("class", "style")
 VOID_TAGS = {"input", "img", "br", "hr"}
 FORM_TAGS = {"input", "textarea", "select", "button", "img", "option"}
 PRUNE_TAGS = {"br", "hr", "wbr"}
@@ -65,9 +71,14 @@ class Encoding:
         return {f.handle for f in self.fragments if f.handle is not None}
 
 
-def _kept_attrs(node: Node) -> list[tuple[str, str]]:
-    """Allow-listed attributes plus live form state; an empty value is a bare flag."""
+def _kept_attrs(node: Node, wide: bool = False) -> list[tuple[str, str]]:
+    """Allow-listed attributes plus live form state; an empty value is a bare flag.
+
+    ``wide`` adds ``class``, ``style`` and every ``data-*`` attribute (the ablation arm).
+    """
     kept = [(k, v) for k in KEEP_ATTRS if (v := node.attr(k)) is not None]
+    if wide:
+        kept += [(k, v) for k, v in node.attrs if k in WIDE_ATTRS or k.startswith("data-")]
     if node.value:
         kept.append(("value", node.value))
     if node.checked:
@@ -101,7 +112,7 @@ def raw_html(snap: Snapshot) -> Encoding:
 # ---- cleaned DOM ---------------------------------------------------------------------------
 
 
-def clean_dom(snap: Snapshot) -> Encoding:
+def clean_dom(snap: Snapshot, wide: bool = False) -> Encoding:
     frags: list[Fragment] = []
     visible = snap.visible
 
@@ -109,7 +120,7 @@ def clean_dom(snap: Snapshot) -> Encoding:
         node = snap.nodes[nid]
         if nid not in visible or node.tag in PRUNE_TAGS:
             return ""
-        kept = _kept_attrs(node)
+        kept = _kept_attrs(node, wide)
         attrs = _attr_text(kept)
         inner: list[str] = []
         own_text = False
@@ -136,7 +147,7 @@ def clean_dom(snap: Snapshot) -> Encoding:
         return text
 
     text = "\n".join(filter(None, (render(r) for r in snap.roots)))
-    return Encoding("clean_dom", text, frags)
+    return Encoding("clean_dom_wide" if wide else "clean_dom", text, frags)
 
 
 # ---- accessibility tree --------------------------------------------------------------------
@@ -252,7 +263,7 @@ def looks_interactive(snap: Snapshot, node: Node) -> bool:
     return node.cursor == "pointer" and (parent is None or parent.cursor != "pointer")
 
 
-def _som(snap: Snapshot, name: str, keep: Callable[[Node], bool]) -> Encoding:
+def _som(snap: Snapshot, name: str, keep: Callable[[Node], bool], wide: bool = False) -> Encoding:
     lines: list[str] = []
     frags: list[Fragment] = []
     visible = snap.visible
@@ -263,7 +274,7 @@ def _som(snap: Snapshot, name: str, keep: Callable[[Node], bool]) -> Encoding:
         text = snap.visible_text(nid)
         if len(text) > SOM_TEXT_LIMIT:
             text = text[: SOM_TEXT_LIMIT - 3] + "..."
-        kept = _kept_attrs(node)
+        kept = _kept_attrs(node, wide)
         attrs = _attr_text(kept)
         head = node.tag + (f" {attrs}" if attrs else "")
         if node.tag in VOID_TAGS:
@@ -293,9 +304,12 @@ def som(snap: Snapshot) -> Encoding:
     return _som(snap, "som", lambda n: looks_interactive(snap, n))
 
 
-def som_listeners(snap: Snapshot) -> Encoding:
+def som_listeners(snap: Snapshot, wide: bool = False) -> Encoding:
     return _som(
-        snap, "som_listeners", lambda n: looks_interactive(snap, n) or n.id in snap.clickable
+        snap,
+        "som_listeners_wide" if wide else "som_listeners",
+        lambda n: looks_interactive(snap, n) or n.id in snap.clickable,
+        wide,
     )
 
 
@@ -305,7 +319,11 @@ ENCODERS: dict[str, Callable[[Snapshot], Encoding]] = {
     "axtree": axtree,
     "som": som,
     "som_listeners": som_listeners,
+    "clean_dom_wide": lambda snap: clean_dom(snap, wide=True),
+    "som_listeners_wide": lambda snap: som_listeners(snap, wide=True),
 }
+# The five main encoders; the *_wide pair is the attribute allow-list ablation.
+MAIN_ENCODERS = ("raw_html", "clean_dom", "axtree", "som", "som_listeners")
 
 
 def encode_all(snap: Snapshot) -> dict[str, Encoding]:

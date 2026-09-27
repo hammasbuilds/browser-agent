@@ -6,9 +6,14 @@ harness observes the page, checks the step's target against every encoding, then
 step through the same :mod:`browser_agent.actions` executor the model uses, and resumes the
 generator, which may re-read the page to decide what to do next.
 
-``needs`` lists the strings from the instruction that pick the target out from its
-neighbours; it is what "identifiable" is checked against. It is empty when the instruction
-picks the target by position or by being the only one of its kind.
+``needs`` lists the facts that pick the target out from its neighbours, written the way the
+page carries them; it is what "identifiable" is checked against. Often that is the
+instruction's own wording ("submit", a name, a colour), but not always: "delete it" is carried
+by an icon whose only name is its ``trash`` class, "the shortest flight" by a duration shown on
+the page. The harness tags every need with where it can be found (instruction, visible page
+text, or markup only; :func:`browser_agent.survival.need_source`) and the report is repeated
+without the markup-only ones. It is empty when the instruction picks the target by position or
+by being the only one of its kind.
 """
 
 from __future__ import annotations

@@ -34,7 +34,6 @@
       cursor: style.cursor,
       value: null,
       checked: null,
-      outer: el.outerHTML.replace(STAMP, ''),
     };
     const tag = el.tagName;
     if (tag === 'INPUT' || tag === 'TEXTAREA') {

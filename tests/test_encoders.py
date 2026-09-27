@@ -16,7 +16,6 @@ def node(nid, parent, tag, children=(), attrs=(), shown=True, rect=(0, 0, 10, 10
         cursor=kw.get("cursor", "auto"),
         value=kw.get("value"),
         checked=kw.get("checked"),
-        outer=kw.get("outer", f"<{tag}></{tag}>"),
     )
 
 
@@ -112,3 +111,29 @@ def test_som_truncates_long_text_and_writes_void_tags_without_a_closer():
     lines = som(snap).text.splitlines()
     assert lines[0].endswith("...</button>") and len(lines[0]) < 130
     assert lines[1] == '[3]<input type="text">'
+
+
+def test_the_wide_allow_list_keeps_the_colour_the_narrow_one_drops():
+    snap = load_snapshot("click-color-0")
+    encs = encode_all(snap)
+    assert "white" not in encs["clean_dom"].text and "white" not in encs["som_listeners"].text
+    assert 'data-color="white"' in encs["clean_dom_wide"].text
+    assert "background-color: white" in encs["som_listeners_wide"].text
+    assert len(encs["clean_dom_wide"].text) > len(encs["clean_dom"].text)
+    # same elements, same indices: the ablation changes attributes only
+    assert encs["som_listeners_wide"].handles == encs["som_listeners"].handles
+
+
+def test_the_wide_list_adds_only_class_style_and_data_attributes():
+    snap = snap_of(
+        node(
+            1,
+            -1,
+            "button",
+            ["Go"],
+            attrs=[("class", "b"), ("style", "x"), ("data-k", "v"), ("onclick", "f()")],
+        )
+    )
+    text = clean_dom(snap, wide=True).text
+    assert 'class="b"' in text and 'style="x"' in text and 'data-k="v"' in text
+    assert "onclick" not in text

@@ -8,8 +8,9 @@ resumes without repeating a single call, and a finished run can be re-scored for
 from __future__ import annotations
 
 import hashlib
+import http.client
 import json
-import urllib.error
+import time
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -33,9 +34,15 @@ class LLMUnavailableError(RuntimeError):
 
 @dataclass
 class OllamaClient:
+    """``/api/chat`` over HTTP. Transient failures (connection refused or dropped, a stalled
+    reply, a malformed or error payload) are retried with exponential backoff; if every
+    attempt fails the result is one :class:`LLMUnavailableError`, never a raw traceback."""
+
     model: str = DEFAULT_MODEL
     base_url: str = DEFAULT_URL
     timeout_s: float = 600.0
+    attempts: int = 3
+    backoff_s: float = 2.0
 
     def chat(self, messages: list[Message], options: dict[str, Any]) -> str:
         body = json.dumps(
@@ -50,12 +57,27 @@ class OllamaClient:
         request = urllib.request.Request(
             f"{self.base_url}/api/chat", data=body, headers={"Content-Type": "application/json"}
         )
-        try:
-            with urllib.request.urlopen(request, timeout=self.timeout_s) as resp:
-                payload = json.loads(resp.read().decode("utf-8"))
-        except urllib.error.URLError as exc:
-            raise LLMUnavailableError(f"ollama at {self.base_url} failed: {exc}") from exc
-        return payload["message"]["content"]
+        last = ""
+        for attempt in range(self.attempts):
+            if attempt:
+                time.sleep(self.backoff_s * 2 ** (attempt - 1))
+            try:
+                with urllib.request.urlopen(request, timeout=self.timeout_s) as resp:
+                    payload = json.loads(resp.read().decode("utf-8"))
+                content = payload["message"]["content"]
+                if not isinstance(content, str):
+                    raise TypeError("message content is not a string")
+                return content
+            except (OSError, http.client.HTTPException, ValueError) as exc:
+                # OSError covers URLError, timeouts and dropped connections; ValueError covers
+                # a body that is not JSON.
+                last = f"{type(exc).__name__}: {exc}"
+            except (KeyError, TypeError) as exc:
+                error = payload.get("error") if isinstance(payload, dict) else None
+                last = f"unexpected reply ({error or exc!r})"
+        raise LLMUnavailableError(
+            f"ollama at {self.base_url} failed {self.attempts} times; last: {last}"
+        )
 
 
 def cache_key(model: str, messages: list[Message], options: dict[str, Any]) -> str:

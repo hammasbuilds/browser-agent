@@ -12,6 +12,7 @@ import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass, field
 from pathlib import Path
+from typing import Any
 
 from playwright.sync_api import Error as PlaywrightError
 
@@ -21,7 +22,7 @@ from browser_agent.encoders import encode_all
 from browser_agent.env import MiniWoBEnv
 from browser_agent.oracles.base import ORACLES, OracleContext, OracleError, Step
 from browser_agent.snapshot import Snapshot
-from browser_agent.survival import check
+from browser_agent.survival import check, need_source
 from browser_agent.tokens import count_tokens
 
 SETTLE_MS = 100
@@ -39,8 +40,9 @@ class StepRecord:
     kind: str
     target: int | None
     needs: list[str]
+    need_sources: list[str]  # per need: instruction / page / markup (survival.need_source)
     target_visible: bool | None
-    checks: dict[str, dict[str, bool]]
+    checks: dict[str, dict[str, Any]]
     tokens: dict[str, int]
 
 
@@ -77,10 +79,10 @@ def _target_stamp(env: MiniWoBEnv, selector: str) -> int:
 
 def measure(
     snap: Snapshot, target: int | None, needs: tuple[str, ...]
-) -> tuple[dict[str, int], dict[str, dict[str, bool]]]:
+) -> tuple[dict[str, int], dict[str, dict[str, Any]]]:
     encodings = encode_all(snap)
     tokens = {name: count_tokens(enc.text) for name, enc in encodings.items()}
-    checks: dict[str, dict[str, bool]] = {}
+    checks: dict[str, dict[str, Any]] = {}
     if target is not None:
         checks = {
             name: check(enc, snap, target, needs).as_dict() for name, enc in encodings.items()
@@ -114,6 +116,9 @@ def run_oracle_episode(env: MiniWoBEnv, task: str, seed: int) -> EpisodeRecord:
                     kind=step.kind,
                     target=target,
                     needs=list(step.needs),
+                    need_sources=[
+                        need_source(n, snap.utterance, snap.page_text()) for n in step.needs
+                    ],
                     target_visible=None if target is None else target in snap.visible,
                     checks=checks,
                     tokens=tokens,

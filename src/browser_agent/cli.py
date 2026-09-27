@@ -65,7 +65,7 @@ def _encoders(value: str) -> list[str]:
 
 def _write(path: Path, data: object) -> None:
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8")
+    path.write_text(json.dumps(data, indent=1) + "\n", encoding="utf-8", newline="\n")
     print(f"wrote {path}")
 
 
@@ -143,7 +143,7 @@ def cmd_report(args: argparse.Namespace) -> int:
     for name in ENCODERS:
         s = survival["encoders"][name]
         print(
-            f"{name:<14}{tokens[name]['first_obs']['median']:>16.0f}"
+            f"{name:<20}{tokens[name]['first_obs']['median']:>16.0f}"
             f"{s['present']['mean']:>10.3f}{s['identifiable']['mean']:>10.3f}"
             f"{s['actionable']['mean']:>10.3f}{s['episode_ceiling']['mean']:>10.3f}"
         )
@@ -151,11 +151,21 @@ def cmd_report(args: argparse.Namespace) -> int:
 
 
 def cmd_agent(args: argparse.Namespace) -> int:
-    from browser_agent.agent import plan_jobs, run_jobs
+    from browser_agent.agent import REPLY_TOKENS, TIMING_TASKS, plan_jobs, run_jobs
     from browser_agent.llm import CachedClient, OllamaClient
 
     oracle = _episodes(Path(args.oracle_episodes), "the model arm budgets steps from it")
-    jobs = plan_jobs(oracle, _encoders(args.encoder), _seeds(args.seeds), _tasks(args.tasks))
+    if args.num_ctx <= REPLY_TOKENS:
+        raise SystemExit(f"--num-ctx must exceed the {REPLY_TOKENS}-token reply budget")
+    tasks = _tasks(args.tasks)
+    if tasks is not None:
+        known = {e["task"] for e in oracle}
+        unknown = [t for t in tasks if t not in known]
+        if unknown:
+            raise SystemExit(f"no oracle episodes for {', '.join(unknown)} in the oracle file")
+    jobs = plan_jobs(
+        oracle, _encoders(args.encoder), _seeds(args.seeds), tasks, args.include_timing
+    )
     if not jobs:
         raise SystemExit("no jobs: no oracle-solved episode matches those tasks and seeds")
     if args.dry_run:
@@ -163,6 +173,8 @@ def cmd_agent(args: argparse.Namespace) -> int:
         for job in jobs:
             by_encoder.setdefault(job.encoder, []).append(job)
         print(f"model {args.model}, num_ctx {args.num_ctx}, {len(jobs)} episodes")
+        if not args.include_timing and args.tasks is None:
+            print(f"  (timing-bound tasks excluded: {', '.join(TIMING_TASKS)})")
         for name, js in by_encoder.items():
             expected = sum(j.oracle_steps + 1 for j in js)
             upper = sum(j.max_steps for j in js)
@@ -193,12 +205,14 @@ def cmd_agent_report(args: argparse.Namespace) -> int:
     oracle = _episodes(Path(args.oracle_episodes), "run `browser-agent oracle` first")
     summary = agent_summary(agent, oracle)
     _write(Path(args.out_dir) / "agent.json", summary)
-    for name, s in summary["encoders"].items():
-        lo, hi = s["success_macro"]["ci95"]
-        print(
-            f"{name:<14} success {s['success_macro']['mean']:.3f} [{lo:.3f}, {hi:.3f}]"
-            f"  tokens/episode {s['prompt_tokens_mean']:.0f}"
-        )
+    for model, per_model in summary["models"].items():
+        print(f"\n{model}")
+        for name, s in per_model["encoders"].items():
+            lo, hi = s["success_macro"]["ci95"]
+            print(
+                f"  {name:<19} success {s['success_macro']['mean']:.3f} [{lo:.3f}, {hi:.3f}]"
+                f"  tokens/episode {s['prompt_tokens_mean']:.0f}"
+            )
     return 0
 
 
@@ -240,6 +254,11 @@ def build_parser() -> argparse.ArgumentParser:
     agent.add_argument("--oracle-episodes", default=str(ORACLE_EPISODES))
     agent.add_argument("--out", default=str(AGENT_EPISODES))
     agent.add_argument("--dry-run", action="store_true", help="print jobs and call estimate")
+    agent.add_argument(
+        "--include-timing",
+        action="store_true",
+        help="also run the timing-bound tasks (they measure model latency, not the encoding)",
+    )
     agent.set_defaults(fn=cmd_agent)
 
     agent_report = sub.add_parser("agent-report", help="summarise model-arm episodes")

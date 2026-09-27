@@ -50,7 +50,13 @@ if (( vram < MIN_FREE_VRAM_MB )); then
   exit 1
 fi
 
-if ! curl -sf "$OLLAMA_URL/api/tags" | grep -q "\"$MODEL\""; then
+# Capture first: `curl | grep -q` under pipefail can fail when grep exits early and curl
+# gets SIGPIPE, which would falsely report the model missing.
+tags=$(curl -sf "$OLLAMA_URL/api/tags") || {
+  echo "Ollama at $OLLAMA_URL is not answering" >&2
+  exit 1
+}
+if ! grep -qF "\"$MODEL\"" <<<"$tags"; then
   echo "Ollama at $OLLAMA_URL is not serving $MODEL (try: ollama pull $MODEL)" >&2
   exit 1
 fi

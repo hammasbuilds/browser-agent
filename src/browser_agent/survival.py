@@ -31,6 +31,7 @@ from __future__ import annotations
 import html
 import re
 from dataclasses import asdict, dataclass
+from typing import Any
 
 from browser_agent.encoders import Encoding
 from browser_agent.snapshot import Snapshot
@@ -51,9 +52,32 @@ class TargetCheck:
     present: bool
     identifiable: bool
     actionable: bool
+    need_hits: tuple[bool, ...] = ()  # per need: found in the target's evidence?
 
-    def as_dict(self) -> dict[str, bool]:
-        return asdict(self)
+    def as_dict(self) -> dict[str, Any]:
+        out = asdict(self)
+        out["need_hits"] = list(self.need_hits)
+        return out
+
+
+NEED_SOURCES = ("instruction", "page", "markup")
+
+
+def need_source(need: str, utterance: str, page_text: str) -> str:
+    """Where a need's words can be found by an agent that has not seen the answer.
+
+    ``instruction``: in the task instruction itself. ``page``: not in the instruction but in
+    the visible text of the page (a flight duration, a card value). ``markup``: only in tag
+    names, ids, classes or other attributes (an icon button's ``trash`` class, a ``rect``).
+    The survival report is repeated with ``markup`` needs dropped, because they measure
+    whether an encoding keeps the page's own naming, not the instruction's wording.
+    """
+    alts = need.split("|")
+    if any(_contains(normalise(utterance), alt) for alt in alts):
+        return "instruction"
+    if any(_contains(normalise(page_text), alt) for alt in alts):
+        return "page"
+    return "markup"
 
 
 def activators(snap: Snapshot, target: int) -> set[int]:
@@ -82,11 +106,12 @@ def check(enc: Encoding, snap: Snapshot, target: int, needs: tuple[str, ...]) ->
     reach = activators(snap, target)
     owned = [f for f in enc.fragments if f.owner in reach]
     if not owned:
-        return TargetCheck(False, False, False)
+        return TargetCheck(False, False, False, tuple(False for _ in needs))
     blob = normalise(" ".join(f.evidence for f in owned))
-    identifiable = all(any(_contains(blob, alt) for alt in need.split("|")) for need in needs)
+    hits = tuple(any(_contains(blob, alt) for alt in need.split("|")) for need in needs)
+    identifiable = all(hits)
     if enc.name == "raw_html":
         actionable = unique_id_selector(snap, target)
     else:
         actionable = any(f.handle is not None for f in owned)
-    return TargetCheck(True, identifiable, actionable)
+    return TargetCheck(True, identifiable, actionable, hits)

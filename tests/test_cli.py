@@ -3,6 +3,7 @@ import json
 import pytest
 
 from browser_agent.cli import main
+from browser_agent.encoders import ENCODERS
 
 
 def run(*argv):
@@ -30,27 +31,24 @@ def test_bad_inputs_get_one_line_reasons_not_tracebacks(tmp_path):
 def test_dry_run_plans_from_oracle_episodes_without_touching_a_model(tmp_path, capsys):
     step = {
         "checks": {},
-        "tokens": {n: 10 for n in ("raw_html", "clean_dom", "axtree", "som", "som_listeners")},
+        "tokens": {n: 10 for n in ENCODERS},
     }
     episodes = tmp_path / "oracle.jsonl"
     rows = [
         {"task": "click-test", "seed": 0, "done": True, "raw_reward": 1.0, "steps": [step]},
-        {"task": "click-test", "seed": 1, "done": True, "raw_reward": -1.0, "steps": [step]},
+        {"task": "click-link", "seed": 0, "done": True, "raw_reward": -1.0, "steps": [step]},
     ]
     episodes.write_text("".join(json.dumps(r) + "\n" for r in rows))
     assert main(["agent", "--dry-run", "--seeds", "2", "--oracle-episodes", str(episodes)]) == 0
     out = capsys.readouterr().out
-    assert "5 episodes" in out and "~10 expected" in out and "20 at most" in out
-    assert "no jobs" in run(
-        "agent",
-        "--dry-run",
-        "--seeds",
-        "2",
-        "--tasks",
-        "click-link",
-        "--oracle-episodes",
-        str(episodes),
-    )
+    n = len(ENCODERS)
+    assert f"{n} episodes" in out and f"~{2 * n} expected" in out and f"{4 * n} at most" in out
+    common = ["agent", "--dry-run", "--oracle-episodes", str(episodes)]
+    # a task the oracle file never mentions is a typo, not an empty plan
+    assert "no oracle episodes for nosuch" in run(*common, "--tasks", "click-test,nosuch")
+    # a known task the oracle never solved gives no jobs
+    assert "no jobs" in run(*common, "--tasks", "click-link")
+    assert "must exceed" in run(*common, "--num-ctx", "-5")
 
 
 def test_tasks_lists_every_family_and_every_exclusion(capsys):
@@ -68,3 +66,12 @@ def test_report_writes_where_it_is_told(tmp_path):
     out = tmp_path / "out"
     assert main(["report", "--episodes", str(episodes), "--out-dir", str(out)]) == 0
     assert sorted(p.name for p in out.iterdir()) == ["oracle.json", "survival.json", "tokens.json"]
+
+
+def test_results_are_written_with_unix_line_endings(tmp_path):
+    from test_report import EPISODES
+
+    episodes = tmp_path / "oracle.jsonl"
+    episodes.write_text("".join(json.dumps(e) + "\n" for e in EPISODES))
+    main(["report", "--episodes", str(episodes), "--out-dir", str(tmp_path)])
+    assert b"\r\n" not in (tmp_path / "survival.json").read_bytes()

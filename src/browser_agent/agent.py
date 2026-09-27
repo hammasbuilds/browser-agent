@@ -54,6 +54,8 @@ TARGET_HELP = {
     "som": "T is the number in square brackets at the start of a line, e.g. 12 for [12].",
     "som_listeners": "T is the number in square brackets at the start of a line, e.g. 12 for [12].",
 }
+TARGET_HELP["clean_dom_wide"] = TARGET_HELP["clean_dom"]
+TARGET_HELP["som_listeners_wide"] = TARGET_HELP["som_listeners"]
 
 PAGE_LABEL = {
     "raw_html": "the page's HTML",
@@ -62,6 +64,8 @@ PAGE_LABEL = {
     "som": "the page's interactive elements",
     "som_listeners": "the page's interactive elements",
 }
+PAGE_LABEL["clean_dom_wide"] = PAGE_LABEL["clean_dom"]
+PAGE_LABEL["som_listeners_wide"] = PAGE_LABEL["som_listeners"]
 
 
 def build_messages(utterance: str, history: list[str], enc: Encoding) -> list[Message]:
@@ -100,7 +104,11 @@ class AgentEpisode:
     action_errors: int
     context_overflow: bool
     history: list[str]
-    error: str | None = None  # the browser failed under the episode (not the model's fault)
+    num_ctx: int = DEFAULT_NUM_CTX
+    # A page-level Playwright error ended the episode early. It still counts as a failure: the
+    # page misbehaving under the model's actions is part of the task. (A browser that dies
+    # outright stops the run instead; nothing is recorded, and resume retries the episode.)
+    error: str | None = None
 
     def as_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -115,11 +123,27 @@ def run_agent_episode(
     max_steps: int,
     num_ctx: int = DEFAULT_NUM_CTX,
 ) -> AgentEpisode:
+    if num_ctx <= REPLY_TOKENS:
+        raise ValueError(f"num_ctx must exceed the {REPLY_TOKENS}-token reply budget")
     encode = ENCODERS[encoder]
     # Indexed encodings are acted on by the indices they show; raw HTML only by selectors.
     by_selector = encoder == "raw_html"
     episode = AgentEpisode(
-        task, seed, encoder, client.model, False, 0.0, False, 0, max_steps, 0, 0, 0, False, []
+        task,
+        seed,
+        encoder,
+        client.model,
+        False,
+        0.0,
+        False,
+        0,
+        max_steps,
+        0,
+        0,
+        0,
+        False,
+        [],
+        num_ctx,
     )
     history = episode.history
     try:
@@ -158,6 +182,8 @@ def run_agent_episode(
         episode.done, episode.raw_reward = outcome.done, outcome.raw_reward
         episode.success = outcome.done and outcome.raw_reward > 0
     except PlaywrightError as exc:
+        if not env.alive():
+            raise BrowserDiedError(f"browser died during {task} seed {seed}") from exc
         episode.error = str(exc).strip().splitlines()[0] if str(exc).strip() else "PlaywrightError"
     return episode
 
@@ -175,11 +201,19 @@ class Job:
     oracle_prompt_tokens: int  # tokens of this encoding summed over the oracle's observations
 
 
+# Tasks whose reward depends on acting within a window measured in hundreds of milliseconds.
+# A model that takes seconds per step fails them whatever it reads, and slower (longer)
+# encodings fail them more, so they would measure latency, not the encoding. Excluded from
+# the model arm unless asked for.
+TIMING_TASKS = ("button-delay", "simon-says", "stock-market")
+
+
 def plan_jobs(
     oracle_episodes: list[dict[str, Any]],
     encoders: list[str],
     seeds: list[int],
     tasks: list[str] | None = None,
+    include_timing: bool = False,
 ) -> list[Job]:
     """One job per (task, seed, encoder) whose oracle episode was solved."""
     jobs: list[Job] = []
@@ -187,6 +221,8 @@ def plan_jobs(
         if not (ep["done"] and ep["raw_reward"] > 0) or ep["seed"] not in seeds:
             continue
         if tasks is not None and ep["task"] not in tasks:
+            continue
+        if ep["task"] in TIMING_TASKS and not include_timing and tasks is None:
             continue
         n = len(ep["steps"])
         for name in encoders:
@@ -211,17 +247,20 @@ def run_jobs(
     progress: Callable[[AgentEpisode], None] | None = None,
     env: MiniWoBEnv | None = None,
 ) -> list[AgentEpisode]:
-    """Run jobs not yet in ``out`` (keyed by task, seed, encoder, model), appending JSONL.
+    """Run jobs not yet in ``out`` (keyed by task, seed, encoder, model, num_ctx), appending.
 
     Uses ``env`` if given (already entered), otherwise launches and closes its own browser.
     """
     seen = set()
     if out.exists():
         done = load_jsonl(out, repair=True)
-        seen = {(e["task"], e["seed"], e["encoder"], e["model"]) for e in done}
+        seen = {
+            (e["task"], e["seed"], e["encoder"], e["model"], e.get("num_ctx", DEFAULT_NUM_CTX))
+            for e in done
+        }
     out.parent.mkdir(parents=True, exist_ok=True)
     results: list[AgentEpisode] = []
-    pending = [j for j in jobs if (j.task, j.seed, j.encoder, client.model) not in seen]
+    pending = [j for j in jobs if (j.task, j.seed, j.encoder, client.model, num_ctx) not in seen]
     if not pending:
         return results
     browser = contextlib.nullcontext(env) if env is not None else MiniWoBEnv()

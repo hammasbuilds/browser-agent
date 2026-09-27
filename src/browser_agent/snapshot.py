@@ -39,7 +39,6 @@ class Node:
     cursor: str
     value: str | None
     checked: bool | None
-    outer: str
 
     def attr(self, name: str) -> str | None:
         for key, value in self.attrs:
@@ -101,6 +100,11 @@ class Snapshot:
                 else:
                     out.discard(node.id)
         return out
+
+    def page_text(self) -> str:
+        """Everything a user could read: visible text plus the values in form fields."""
+        values = [n.value for n in self.nodes.values() if n.value and n.id in self.visible]
+        return " ".join([self.visible_text(r) for r in self.roots] + values)
 
     def is_within(self, nid: int, ancestor: int) -> bool:
         """True when ``nid`` is ``ancestor`` or lies inside it."""

@@ -19,7 +19,7 @@ from pathlib import Path
 from browser_agent.agent import DEFAULT_NUM_CTX, AgentEpisode, Job
 from browser_agent.encoders import ENCODERS, encode_all
 from browser_agent.env import MissingBrowserError, TaskNotFoundError
-from browser_agent.harness import EpisodeRecord, load_jsonl
+from browser_agent.harness import BrowserDiedError, EpisodeRecord, load_jsonl
 from browser_agent.llm import DEFAULT_MODEL, DEFAULT_URL, LLMUnavailableError
 
 RESULTS = Path("results")
@@ -46,7 +46,10 @@ def _tasks(value: str | None) -> list[str] | None:
 def _episodes(path: Path, hint: str) -> list[dict]:
     if not path.is_file():
         raise SystemExit(f"{path} not found; {hint}")
-    episodes = load_jsonl(path)
+    try:
+        episodes = load_jsonl(path)
+    except ValueError as exc:
+        raise SystemExit(str(exc)) from None
     if not episodes:
         raise SystemExit(f"{path} holds no episodes; {hint}")
     return episodes
@@ -251,7 +254,7 @@ def main(argv: list[str] | None = None) -> int:
     args = build_parser().parse_args(argv)
     try:
         return args.fn(args)
-    except (MissingBrowserError, TaskNotFoundError, LLMUnavailableError) as exc:
+    except (MissingBrowserError, TaskNotFoundError, LLMUnavailableError, BrowserDiedError) as exc:
         print(f"error: {exc}", file=sys.stderr)
         return 2
 

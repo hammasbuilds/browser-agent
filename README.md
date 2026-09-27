@@ -14,7 +14,7 @@
   <img src="https://img.shields.io/badge/python-3.11%2B-blue" alt="python">
   <img src="https://img.shields.io/badge/browser-Playwright%20Chromium-informational" alt="browser">
   <img src="https://img.shields.io/badge/benchmark-MiniWoB%2B%2B%20(101%20tasks)-success" alt="benchmark">
-  <img src="https://img.shields.io/badge/tests-75%20passing-success" alt="tests">
+  <img src="https://img.shields.io/badge/tests-77%20passing-success" alt="tests">
   <img src="https://img.shields.io/badge/model%20arm-queued-lightgrey" alt="model arm">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
 </p>
@@ -53,10 +53,10 @@ model: a scripted oracle solves each task through the same action layer the agen
 every step the element it acts on is looked up in all five encodings.
 
 > **A numbered list of interactive elements is 3.6x cheaper than raw HTML and keeps 93% of the
-> targets raw HTML shows, as many as a cleaned DOM at half its tokens, but only when it asks
-> Chrome which elements have click listeners; the usual attribute-and-cursor heuristic keeps
-> 86%. What no text encoding keeps is colour and icon identity: 10 of 101 tasks lose a target
-> in every cleaned encoding, and no pair of encodings recovers them.**
+> targets raw HTML shows, no detectably fewer than a cleaned DOM at half its tokens, but only
+> when it asks Chrome which elements have click listeners; the usual attribute-and-cursor
+> heuristic keeps 86%. What no text encoding keeps is colour and icon identity: 10 of 101
+> tasks lose a target in every cleaned encoding, and no pair of encodings recovers them.**
 
 ## Findings
 
@@ -99,8 +99,9 @@ Paired differences in "kept" (per-task difference, bootstrapped over tasks), fro
    target from 22 to 13 (the Reply and Forward buttons of four `email-inbox` variants,
    social-media, grid-coordinate, tic-tac-toe, ascending-numbers, form-sequence-3), for 16
    more tokens at the median; it adds elements to the list, so it cannot lose any. The gain,
-   +0.069 [+0.029, +0.115], is the only contrast in the table whose interval excludes zero:
-   with it, the list is statistically indistinguishable from `clean_dom` at half the tokens.
+   +0.069 [+0.029, +0.115], is the only contrast in the table whose interval excludes zero.
+   With it, the list shows no detectable difference from `clean_dom` (-0.006, CI -0.025 to
+   +0.006) at half the tokens; that interval rules out a gap larger than about 2.5 points.
 2. **The accessibility tree loses unlabelled form fields and unnamed controls.** `login-user`
    and `login-user-popup` put a `<label>` next to each input without `for=` and without
    wrapping it, so Chrome gives both textboxes an empty name. The tree shows `text "Username"`
@@ -232,7 +233,7 @@ cd browser-agent
 uv sync
 uv run playwright install chromium      # skip if Playwright's Chromium is already installed
 
-uv run pytest -q                        # 75 tests, no network, no model
+uv run pytest -q                        # 77 tests, no network, no model
 uv run python demo.py                   # four pages, five encodings, known answers
 uv run browser-agent tasks              # the 101 runnable tasks and the 29 left out, with reasons
 uv run browser-agent show click-color --seed 0
@@ -280,7 +281,7 @@ which needs Ollama serving `qwen2.5:14b-instruct` and roughly 12 GB of free VRAM
 uv run pytest -q
 ```
 
-75 tests. The encoder and survival tests run on snapshots saved from real task pages
+77 tests. The encoder and survival tests run on snapshots saved from real task pages
 (`tests/fixtures/`), so they need no browser. The browser tests (`-m browser`) drive real
 Chromium: seeded resets are deterministic, a wrong click gets the benchmark's negative reward,
 the executor refuses indices the agent was not shown, pages cannot reach the network, and the
@@ -342,7 +343,8 @@ the context window (never sent), and an agent on an indexed encoding trying a CS
 - **The first identifiability check was too easy to pass.** It searched the rendered text, so
   a needed "5" was satisfied by the index `[5]` and a needed ">" by any tag's closing bracket.
   An independent review caught it; fragments now carry their content without indices or
-  markup, and needs match as whole words. Survival was re-measured from scratch after the fix.
+  markup, and needs match as whole words. The whole oracle run was repeated after the fix and
+  every results file regenerated from it.
 
 ## Keywords
 

@@ -12,6 +12,7 @@ a ``context_overflow`` failure, which is a real cost of that encoding.
 
 from __future__ import annotations
 
+import contextlib
 import json
 from collections.abc import Callable
 from dataclasses import asdict, dataclass
@@ -23,7 +24,7 @@ from playwright.sync_api import Error as PlaywrightError
 from browser_agent.actions import MAX_WAIT_MS, ActionError, execute, parse_action
 from browser_agent.encoders import ENCODERS, Encoding
 from browser_agent.env import MiniWoBEnv
-from browser_agent.harness import load_jsonl
+from browser_agent.harness import BrowserDiedError, load_jsonl
 from browser_agent.llm import ChatClient, Message
 from browser_agent.tokens import count_tokens
 
@@ -208,21 +209,29 @@ def run_jobs(
     out: Path,
     num_ctx: int = DEFAULT_NUM_CTX,
     progress: Callable[[AgentEpisode], None] | None = None,
+    env: MiniWoBEnv | None = None,
 ) -> list[AgentEpisode]:
-    """Run jobs not yet in ``out`` (keyed by task, seed, encoder, model), appending JSONL."""
+    """Run jobs not yet in ``out`` (keyed by task, seed, encoder, model), appending JSONL.
+
+    Uses ``env`` if given (already entered), otherwise launches and closes its own browser.
+    """
     seen = set()
     if out.exists():
-        seen = {(e["task"], e["seed"], e["encoder"], e["model"]) for e in load_jsonl(out)}
+        done = load_jsonl(out, repair=True)
+        seen = {(e["task"], e["seed"], e["encoder"], e["model"]) for e in done}
     out.parent.mkdir(parents=True, exist_ok=True)
     results: list[AgentEpisode] = []
     pending = [j for j in jobs if (j.task, j.seed, j.encoder, client.model) not in seen]
     if not pending:
         return results
-    with MiniWoBEnv() as env, out.open("a", encoding="utf-8") as fh:
+    browser = contextlib.nullcontext(env) if env is not None else MiniWoBEnv()
+    with browser as env, out.open("a", encoding="utf-8") as fh:
         for job in pending:
             episode = run_agent_episode(
                 env, client, job.task, job.seed, job.encoder, job.max_steps, num_ctx
             )
+            if not env.alive():
+                raise BrowserDiedError(f"browser died during {job}: rerun to resume")
             fh.write(json.dumps(episode.as_dict()) + "\n")
             fh.flush()
             results.append(episode)

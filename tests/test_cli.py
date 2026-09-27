@@ -22,6 +22,9 @@ def test_bad_inputs_get_one_line_reasons_not_tracebacks(tmp_path):
     empty = tmp_path / "empty.jsonl"
     empty.write_text("")
     assert "holds no episodes" in run("report", "--episodes", str(empty))
+    corrupt = tmp_path / "corrupt.jsonl"
+    corrupt.write_text('{"a": 1}\nnot json\n{"a": 3}\n')
+    assert "line 2 is not JSON" in run("report", "--episodes", str(corrupt))
 
 
 def test_dry_run_plans_from_oracle_episodes_without_touching_a_model(tmp_path, capsys):

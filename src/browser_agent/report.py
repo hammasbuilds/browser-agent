@@ -232,9 +232,15 @@ def agent_summary(agent_eps: list[Episode], oracle_eps: list[Episode]) -> dict[s
     *not* identifiable in an encoding, how often did the model still succeed with it?
     """
     oracle_by_key = {(e["task"], e["seed"]): e for e in oracle_eps}
-    out: dict[str, Any] = {"model": sorted({e["model"] for e in agent_eps}), "encoders": {}}
+    # An episode whose browser failed under it says nothing about the model: counted apart.
+    broken = [e for e in agent_eps if e.get("error")]
+    out: dict[str, Any] = {
+        "model": sorted({e["model"] for e in agent_eps}),
+        "browser_errors_excluded": len(broken),
+        "encoders": {},
+    }
     for name in ENCODERS:
-        eps = [e for e in agent_eps if e["encoder"] == name]
+        eps = [e for e in agent_eps if e["encoder"] == name and not e.get("error")]
         if not eps:
             continue
         per_task: dict[str, list[int]] = defaultdict(list)

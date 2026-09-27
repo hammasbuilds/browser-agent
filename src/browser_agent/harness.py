@@ -25,6 +25,12 @@ from browser_agent.survival import check
 from browser_agent.tokens import count_tokens
 
 SETTLE_MS = 100
+
+
+class BrowserDiedError(RuntimeError):
+    """The browser went away mid-run; nothing was recorded for the episode in flight."""
+
+
 MAX_ORACLE_STEPS = 40
 
 
@@ -141,6 +147,8 @@ def run_oracle(
     """Run every (task, seed), appending one JSON line per episode to ``out``.
 
     Episodes already in ``out`` are skipped, so an interrupted run resumes where it stopped.
+    If the browser itself dies, the run stops *without* recording that episode, so a resume
+    retries it instead of inheriting a crash as a task failure.
     """
     done = {(e["task"], e["seed"]) for e in load_jsonl(out, repair=True)} if out.exists() else set()
     out.parent.mkdir(parents=True, exist_ok=True)
@@ -151,6 +159,8 @@ def run_oracle(
                 if (task, seed) in done:
                     continue
                 record = run_oracle_episode(env, task, seed)
+                if not env.alive():
+                    raise BrowserDiedError(f"browser died during {task} seed {seed}: rerun")
                 fh.write(json.dumps(record.as_dict()) + "\n")
                 fh.flush()
                 records.append(record)

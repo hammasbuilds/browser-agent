@@ -115,6 +115,15 @@ class MiniWoBEnv:
         if self._pw is not None:
             self._pw.stop()
 
+    def alive(self) -> bool:
+        """False once the browser or the page has gone (a crash, not a task failure)."""
+        return (
+            self._browser is not None
+            and self._browser.is_connected()
+            and self.page is not None
+            and not self.page.is_closed()
+        )
+
     def _live_page(self) -> Page:
         if self.page is None:
             raise RuntimeError("MiniWoBEnv must be used inside a `with` block")

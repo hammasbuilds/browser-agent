@@ -5,12 +5,14 @@ model arm is built, tested against a fake client, and queued in `scripts/run_mod
 
 ## Self-score
 
-An independent hostile review scored the first complete version 83. Every finding it raised
-was fixed (list below) and the oracle run and all results were regenerated from scratch.
+An independent hostile review scored the first complete version 83 and, after the fixes below
+and a full regenerated oracle run, 92; its two remaining correctness points (agent resume after
+a kill, browser crashes counted as model failures) and two small ones (a traceback on a
+corrupt JSONL line, "statistically indistinguishable" wording) are fixed and tested since.
 
 | Points | Criterion | Score | Reason |
 |---:|---|---:|---|
-| 15 | Works from a clean clone | 15 | Fresh clone: `uv sync`, `uv run pytest -q` (75 passed), `uv run python demo.py` all succeed offline; pages, tokenizer and fixtures are vendored and checksummed; the only machine requirement is Playwright's Chromium, and browser tests skip cleanly without it. |
+| 15 | Works from a clean clone | 15 | Fresh clone: `uv sync`, `uv run pytest -q` (77 passed), `uv run python demo.py` all succeed offline; pages, tokenizer and fixtures are vendored and checksummed; the only machine requirement is Playwright's Chromium, and browser tests skip cleanly without it. |
 | 20 | Real data, real result | 17 | 2,020 real MiniWoB++ episodes over 101 tasks, rewarded by the benchmark's own globals; tokens, survival and oracle results all from them. Capped: the brief's end question (which encoding a model succeeds with) needs the queued model arm. |
 | 15 | Finding quality | 13 | Conditional measure (kept, given raw HTML shows it) so context-dependent tasks do not blur the comparison; one-variable ablation (`som` vs `som_listeners`) with a paired bootstrap interval excluding zero; four paired contrasts; five pairwise unions test whether combining rescues losses (it does not for colour/icon tasks); task-level CIs; every surprising number investigated (raw present = 1.000, clean DOM longer than raw on 19 tasks, the three imperfect oracle tasks, the review's too-easy match). Capped by the model arm. |
 | 15 | Correctness | 14 | Evidence excludes indices and markup and matches whole words; agent restricted to its encoding's handles; a failing episode is recorded, never crashes or blocks a resume; truncated JSONL repaired. Residual: "needs" strings are chosen per task by hand. |
@@ -38,6 +40,10 @@ was fixed (list below) and the oracle run and all results were regenerated from 
   oracle waits between steps) and a 600 ms settle for jQuery UI animations.
 - Stale counts, the pyproject encoder count, a stale comment, dead fields, missing types and
   duplicated CLI defaults.
+- Second round: the agent run repairs a line cut off by a kill before appending; a dead browser
+  stops a run without recording the episode in flight (oracle and agent), and browser-error
+  episodes are excluded from agent success and counted apart; a corrupt JSONL line is a
+  one-line error; "no detectable difference" instead of "indistinguishable".
 
 ## Done
 
@@ -89,7 +95,7 @@ serves the model; `--dry-run` prints the plan). Defaults: `qwen2.5:14b-instruct`
 unset VIRTUAL_ENV
 uv sync
 uv run python scripts/fetch_miniwob.py --verify     # 218/218 files match the pinned commit
-uv run pytest -q                                    # 75 passed
+uv run pytest -q                                    # 77 passed
 uv run python demo.py                               # README Input/Output samples 1-4
 uv run browser-agent show login-user --seed 0 --encoder axtree,som   # sample 2's encodings
 uv run browser-agent oracle --seeds 20              # results/oracle_episodes.jsonl (~1 h)

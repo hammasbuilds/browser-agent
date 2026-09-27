@@ -126,3 +126,23 @@ def test_agent_summary_splits_success_by_whether_the_targets_survived():
     assert out["by_survival"]["some_target_lost"]["success"] == 0.0
     assert out["success_macro"]["mean"] == 0.5
     assert out["invalid_reply_rate"] == 0.25
+
+
+def test_episodes_whose_browser_failed_are_not_counted_as_model_failures():
+    base = {
+        "seed": 0,
+        "encoder": "som",
+        "model": "m",
+        "steps": 1,
+        "prompt_tokens": 30,
+        "invalid_replies": 0,
+        "context_overflow": False,
+    }
+    agent = [
+        {**base, "task": "click-test", "success": True},
+        {**base, "task": "click-color", "success": False, "error": "Target crashed"},
+    ]
+    summary = agent_summary(agent, EPISODES)
+    assert summary["browser_errors_excluded"] == 1
+    assert summary["encoders"]["som"]["episodes"] == 1
+    assert summary["encoders"]["som"]["success_macro"]["mean"] == 1.0

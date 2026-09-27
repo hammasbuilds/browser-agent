@@ -6,8 +6,8 @@ import re
 import pytest
 
 from browser_agent.actions import Action, ActionError, execute
-from browser_agent.agent import run_agent_episode
-from browser_agent.harness import run_oracle_episode
+from browser_agent.agent import Job, run_agent_episode, run_jobs
+from browser_agent.harness import load_jsonl, run_oracle_episode
 from browser_agent.llm import FakeClient
 
 pytestmark = pytest.mark.browser
@@ -112,3 +112,15 @@ def test_the_model_can_wait(env):
     fake = FakeClient(lambda messages: next(replies))
     episode = run_agent_episode(env, fake, "click-test", 0, "axtree", max_steps=3)
     assert episode.history == ["wait ms=50 -> ok", "done"] and episode.error is None
+
+
+def test_agent_resume_repairs_a_line_cut_off_by_a_kill(env, tmp_path):
+    out = tmp_path / "agent.jsonl"
+    out.write_text('{"task": "click-test", "seed": 9', encoding="utf-8")  # killed mid-write
+    fake = FakeClient(_click_line(r"^\[(\d+)\]<button[^>]*>Click Me!"))
+    jobs = [Job("click-test", 0, "som", 4, 1, 0)]
+    (episode,) = run_jobs(jobs, fake, out, env=env)
+    assert episode.success
+    (row,) = load_jsonl(out)
+    assert (row["task"], row["seed"], row["success"]) == ("click-test", 0, True)
+    assert run_jobs(jobs, fake, out, env=env) == []  # resumes: nothing left to do

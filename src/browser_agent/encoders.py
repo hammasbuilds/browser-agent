@@ -71,14 +71,18 @@ class Encoding:
         return {f.handle for f in self.fragments if f.handle is not None}
 
 
-def _kept_attrs(node: Node, wide: bool = False) -> list[tuple[str, str]]:
+def _kept_attrs(node: Node, wide: bool = False, data: bool = True) -> list[tuple[str, str]]:
     """Allow-listed attributes plus live form state; an empty value is a bare flag.
 
-    ``wide`` adds ``class``, ``style`` and every ``data-*`` attribute (the ablation arm).
+    ``wide`` adds ``class``, ``style`` and (unless ``data`` is false) every ``data-*``
+    attribute: the ablation arm. ``data=False`` separates what page styling carries from what
+    MiniWoB's own ``data-*`` bookkeeping (often the grader's answer) carries.
     """
     kept = [(k, v) for k in KEEP_ATTRS if (v := node.attr(k)) is not None]
     if wide:
-        kept += [(k, v) for k, v in node.attrs if k in WIDE_ATTRS or k.startswith("data-")]
+        kept += [
+            (k, v) for k, v in node.attrs if k in WIDE_ATTRS or (data and k.startswith("data-"))
+        ]
     if node.value:
         kept.append(("value", node.value))
     if node.checked:
@@ -112,7 +116,7 @@ def raw_html(snap: Snapshot) -> Encoding:
 # ---- cleaned DOM ---------------------------------------------------------------------------
 
 
-def clean_dom(snap: Snapshot, wide: bool = False) -> Encoding:
+def clean_dom(snap: Snapshot, wide: bool = False, data: bool = True) -> Encoding:
     frags: list[Fragment] = []
     visible = snap.visible
 
@@ -120,7 +124,7 @@ def clean_dom(snap: Snapshot, wide: bool = False) -> Encoding:
         node = snap.nodes[nid]
         if nid not in visible or node.tag in PRUNE_TAGS:
             return ""
-        kept = _kept_attrs(node, wide)
+        kept = _kept_attrs(node, wide, data)
         attrs = _attr_text(kept)
         inner: list[str] = []
         own_text = False
@@ -263,7 +267,13 @@ def looks_interactive(snap: Snapshot, node: Node) -> bool:
     return node.cursor == "pointer" and (parent is None or parent.cursor != "pointer")
 
 
-def _som(snap: Snapshot, name: str, keep: Callable[[Node], bool], wide: bool = False) -> Encoding:
+def _som(
+    snap: Snapshot,
+    name: str,
+    keep: Callable[[Node], bool],
+    wide: bool = False,
+    data: bool = True,
+) -> Encoding:
     lines: list[str] = []
     frags: list[Fragment] = []
     visible = snap.visible
@@ -274,7 +284,7 @@ def _som(snap: Snapshot, name: str, keep: Callable[[Node], bool], wide: bool = F
         text = snap.visible_text(nid)
         if len(text) > SOM_TEXT_LIMIT:
             text = text[: SOM_TEXT_LIMIT - 3] + "..."
-        kept = _kept_attrs(node, wide)
+        kept = _kept_attrs(node, wide, data)
         attrs = _attr_text(kept)
         head = node.tag + (f" {attrs}" if attrs else "")
         if node.tag in VOID_TAGS:
@@ -304,12 +314,13 @@ def som(snap: Snapshot) -> Encoding:
     return _som(snap, "som", lambda n: looks_interactive(snap, n))
 
 
-def som_listeners(snap: Snapshot, wide: bool = False) -> Encoding:
+def som_listeners(snap: Snapshot, wide: bool = False, data: bool = True) -> Encoding:
     return _som(
         snap,
         "som_listeners_wide" if wide else "som_listeners",
         lambda n: looks_interactive(snap, n) or n.id in snap.clickable,
         wide,
+        data,
     )
 
 

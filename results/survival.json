@@ -2,10 +2,15 @@
  "unit": "per-task mean over target steps in oracle-solved episodes; CI bootstraps tasks",
  "usable_given_raw": "of the targets raw_html shows identifiably, the share this encoding keeps identifiable and reachable by an index (raw_html: by any selector)",
  "tasks": 101,
- "target_steps": 5743,
+ "target_steps": 5742,
  "target_steps_without_needs": 1307,
  "invisible_target_steps": {
   "terminal": 80
+ },
+ "need_sources": {
+  "instruction": 3173,
+  "page": 1190,
+  "markup": 275
  },
  "encoders": {
   "raw_html": {
@@ -1622,6 +1627,811 @@
      "present": false
     }
    }
+  },
+  "clean_dom_wide": {
+   "present": {
+    "mean": 0.9901,
+    "ci95": [
+     0.9703,
+     1.0
+    ],
+    "tasks_below_1": [
+     "terminal"
+    ]
+   },
+   "identifiable": {
+    "mean": 0.9229,
+    "ci95": [
+     0.8752,
+     0.963
+    ],
+    "tasks_below_1": [
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "click-shape",
+     "find-greatest",
+     "multi-layouts",
+     "multi-orderings",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal"
+    ]
+   },
+   "actionable": {
+    "mean": 0.9901,
+    "ci95": [
+     0.9703,
+     1.0
+    ],
+    "tasks_below_1": [
+     "terminal"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 0.9787,
+    "ci95": [
+     0.951,
+     1.0
+    ],
+    "tasks": 101,
+    "tasks_losing_some": [
+     "click-shape",
+     "find-greatest",
+     "terminal"
+    ]
+   },
+   "episode_ceiling": {
+    "mean": 0.8881,
+    "ci95": [
+     0.8252,
+     0.9441
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 0.9618
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.7762
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 1.0
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8929
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.9417
+    }
+   },
+   "examples_lost": {
+    "click-shape": {
+     "seed": 4,
+     "utterance": "Click on a blue 5",
+     "needs": [
+      "blue",
+      "5"
+     ],
+     "present": true
+    },
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "find-greatest": {
+     "seed": 0,
+     "utterance": "Find and pick the card with the greatest number, then press submit.",
+     "needs": [
+      "17"
+     ],
+     "present": true
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": true
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "terminal": {
+     "seed": 0,
+     "utterance": "Use the terminal below to delete a file ending with the extension .py",
+     "needs": [],
+     "present": false
+    }
+   }
+  },
+  "som_listeners_wide": {
+   "present": {
+    "mean": 0.9873,
+    "ci95": [
+     0.962,
+     1.0
+    ],
+    "tasks_below_1": [
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "identifiable": {
+    "mean": 0.9201,
+    "ci95": [
+     0.8728,
+     0.9599
+    ],
+    "tasks_below_1": [
+     "book-flight",
+     "book-flight-nodelay",
+     "buy-ticket",
+     "click-shape",
+     "find-greatest",
+     "multi-layouts",
+     "multi-orderings",
+     "navigate-tree",
+     "order-food",
+     "read-table-2",
+     "social-media",
+     "social-media-all",
+     "social-media-some",
+     "terminal"
+    ]
+   },
+   "actionable": {
+    "mean": 0.9873,
+    "ci95": [
+     0.962,
+     1.0
+    ],
+    "tasks_below_1": [
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "usable_given_raw": {
+    "mean": 0.9759,
+    "ci95": [
+     0.9482,
+     0.9972
+    ],
+    "tasks": 101,
+    "tasks_losing_some": [
+     "click-shape",
+     "find-greatest",
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "episode_ceiling": {
+    "mean": 0.8847,
+    "ci95": [
+     0.8203,
+     0.9406
+    ]
+   },
+   "identifiable_by_family": {
+    "choose": {
+     "tasks": 8,
+     "mean": 1.0
+    },
+    "click": {
+     "tasks": 17,
+     "mean": 0.9618
+    },
+    "composite": {
+     "tasks": 20,
+     "mean": 0.7762
+    },
+    "form": {
+     "tasks": 22,
+     "mean": 1.0
+    },
+    "navigate": {
+     "tasks": 14,
+     "mean": 0.8729
+    },
+    "reason": {
+     "tasks": 20,
+     "mean": 0.9417
+    }
+   },
+   "examples_lost": {
+    "click-shape": {
+     "seed": 4,
+     "utterance": "Click on a blue 5",
+     "needs": [
+      "blue",
+      "5"
+     ],
+     "present": true
+    },
+    "navigate-tree": {
+     "seed": 1,
+     "utterance": "Navigate through the file tree. Find and click on the folder or file named \"Livia\".",
+     "needs": [
+      "Livia"
+     ],
+     "present": false
+    },
+    "multi-layouts": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "multi-orderings": {
+     "seed": 0,
+     "utterance": "Search for surreal movies directed by Baxter from year 1995.",
+     "needs": [
+      "genre"
+     ],
+     "present": true
+    },
+    "find-greatest": {
+     "seed": 0,
+     "utterance": "Find and pick the card with the greatest number, then press submit.",
+     "needs": [
+      "17"
+     ],
+     "present": true
+    },
+    "read-table-2": {
+     "seed": 0,
+     "utterance": "Enter the value that corresponds with each label into the form and submit when done.",
+     "needs": [
+      "Language"
+     ],
+     "present": true
+    },
+    "book-flight": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "book-flight-nodelay": {
+     "seed": 0,
+     "utterance": "Book the shortest one-way flight from: Rosario, WA to: Long Beach, CA on 12/19/2016.",
+     "needs": [
+      "1h 32m"
+     ],
+     "present": true
+    },
+    "buy-ticket": {
+     "seed": 1,
+     "utterance": "Buy the ticket with the shortest duration.",
+     "needs": [
+      "0h 7m"
+     ],
+     "present": true
+    },
+    "order-food": {
+     "seed": 0,
+     "utterance": "Order 2 items that are meat",
+     "needs": [
+      "meat",
+      "+"
+     ],
+     "present": true
+    },
+    "social-media": {
+     "seed": 0,
+     "utterance": "For the user @beaulah, click on the \"Retweet\" button.",
+     "needs": [
+      "@beaulah",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-all": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on all posts by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "social-media-some": {
+     "seed": 0,
+     "utterance": "Click the \"Retweet\" button on 1 post by @enola and then click Submit.",
+     "needs": [
+      "@enola",
+      "retweet"
+     ],
+     "present": true
+    },
+    "terminal": {
+     "seed": 0,
+     "utterance": "Use the terminal below to delete a file ending with the extension .py",
+     "needs": [],
+     "present": false
+    }
+   }
+  }
+ },
+ "sensitivity_usable_given_raw": {
+  "all_needs": {
+   "raw_html": {
+    "mean": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "tasks_losing_some": []
+   },
+   "clean_dom": {
+    "mean": 0.9251,
+    "ci95": [
+     0.8791,
+     0.9655
+    ],
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "terminal",
+     "use-spinner"
+    ]
+   },
+   "axtree": {
+    "mean": 0.8985,
+    "ci95": [
+     0.8482,
+     0.9439
+    ],
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "grid-coordinate",
+     "login-user",
+     "login-user-popup",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "som": {
+    "mean": 0.8625,
+    "ci95": [
+     0.8027,
+     0.9171
+    ],
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "form-sequence-3",
+     "grid-coordinate",
+     "navigate-tree",
+     "social-media",
+     "terminal",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "som_listeners": {
+    "mean": 0.9312,
+    "ci95": [
+     0.8905,
+     0.9673
+    ],
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "navigate-tree",
+     "terminal",
+     "use-spinner"
+    ]
+   },
+   "clean_dom_wide": {
+    "mean": 0.9787,
+    "ci95": [
+     0.951,
+     1.0
+    ],
+    "tasks_losing_some": [
+     "click-shape",
+     "find-greatest",
+     "terminal"
+    ]
+   },
+   "som_listeners_wide": {
+    "mean": 0.9759,
+    "ci95": [
+     0.9467,
+     0.9972
+    ],
+    "tasks_losing_some": [
+     "click-shape",
+     "find-greatest",
+     "navigate-tree",
+     "terminal"
+    ]
+   }
+  },
+  "no_markup_needs": {
+   "raw_html": {
+    "mean": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "tasks_losing_some": []
+   },
+   "clean_dom": {
+    "mean": 0.9333,
+    "ci95": [
+     0.8914,
+     0.9715
+    ],
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "terminal"
+    ]
+   },
+   "axtree": {
+    "mean": 0.9144,
+    "ci95": [
+     0.8646,
+     0.9582
+    ],
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "grid-coordinate",
+     "login-user",
+     "login-user-popup",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "som": {
+    "mean": 0.8771,
+    "ci95": [
+     0.821,
+     0.9297
+    ],
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "form-sequence-3",
+     "grid-coordinate",
+     "navigate-tree",
+     "social-media",
+     "terminal",
+     "tic-tac-toe"
+    ]
+   },
+   "som_listeners": {
+    "mean": 0.9458,
+    "ci95": [
+     0.9088,
+     0.9798
+    ],
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "clean_dom_wide": {
+    "mean": 0.9837,
+    "ci95": [
+     0.9574,
+     1.0
+    ],
+    "tasks_losing_some": [
+     "click-shape",
+     "terminal"
+    ]
+   },
+   "som_listeners_wide": {
+    "mean": 0.9809,
+    "ci95": [
+     0.9528,
+     1.0
+    ],
+    "tasks_losing_some": [
+     "click-shape",
+     "navigate-tree",
+     "terminal"
+    ]
+   }
+  },
+  "instruction_needs_only": {
+   "raw_html": {
+    "mean": 1.0,
+    "ci95": [
+     1.0,
+     1.0
+    ],
+    "tasks_losing_some": []
+   },
+   "clean_dom": {
+    "mean": 0.9333,
+    "ci95": [
+     0.8914,
+     0.9715
+    ],
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "find-greatest",
+     "terminal"
+    ]
+   },
+   "axtree": {
+    "mean": 0.9144,
+    "ci95": [
+     0.8646,
+     0.9582
+    ],
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "grid-coordinate",
+     "login-user",
+     "login-user-popup",
+     "tic-tac-toe",
+     "use-spinner"
+    ]
+   },
+   "som": {
+    "mean": 0.8771,
+    "ci95": [
+     0.821,
+     0.9297
+    ],
+    "tasks_losing_some": [
+     "ascending-numbers",
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-forward",
+     "email-inbox-forward-nl",
+     "email-inbox-forward-nl-turk",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-reply",
+     "email-inbox-star-reply",
+     "form-sequence-3",
+     "grid-coordinate",
+     "navigate-tree",
+     "social-media",
+     "terminal",
+     "tic-tac-toe"
+    ]
+   },
+   "som_listeners": {
+    "mean": 0.9458,
+    "ci95": [
+     0.9088,
+     0.9798
+    ],
+    "tasks_losing_some": [
+     "click-color",
+     "click-shades",
+     "click-shape",
+     "email-inbox",
+     "email-inbox-delete",
+     "email-inbox-important",
+     "email-inbox-nl-turk",
+     "email-inbox-noscroll",
+     "email-inbox-star-reply",
+     "navigate-tree",
+     "terminal"
+    ]
+   },
+   "clean_dom_wide": {
+    "mean": 0.9837,
+    "ci95": [
+     0.9574,
+     1.0
+    ],
+    "tasks_losing_some": [
+     "click-shape",
+     "terminal"
+    ]
+   },
+   "som_listeners_wide": {
+    "mean": 0.9809,
+    "ci95": [
+     0.9528,
+     1.0
+    ],
+    "tasks_losing_some": [
+     "click-shape",
+     "navigate-tree",
+     "terminal"
+    ]
+   }
   }
  },
  "contrasts_usable_given_raw": {
@@ -1651,6 +2461,20 @@
    "ci95": [
     -0.0248,
     0.0055
+   ]
+  },
+  "clean_dom_wide - clean_dom": {
+   "mean": 0.0536,
+   "ci95": [
+    0.0219,
+    0.0935
+   ]
+  },
+  "som_listeners_wide - som_listeners": {
+   "mean": 0.0447,
+   "ci95": [
+    0.0153,
+    0.0803
    ]
   }
  },

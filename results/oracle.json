@@ -1,14 +1,15 @@
 {
  "tasks": 101,
  "episodes": 2020,
- "tasks_always_solved": 98,
+ "tasks_always_solved": 97,
  "tasks_never_solved": [],
  "tasks_sometimes_failed": [
   "click-menu",
   "click-pie",
-  "click-pie-nodelay"
+  "click-pie-nodelay",
+  "stock-market"
  ],
- "episode_success_rate": 0.9891,
+ "episode_success_rate": 0.9886,
  "per_task": {
   "ascending-numbers": {
    "family": "reason",
@@ -1178,14 +1179,21 @@
   "stock-market": {
    "family": "reason",
    "episodes": 20,
-   "solved": 20,
-   "rate": 1.0,
+   "solved": 19,
+   "rate": 0.95,
    "wilson95": [
-    0.8389,
-    1.0
+    0.7639,
+    0.9911
    ],
    "steps_mean": 1.0,
-   "failures": []
+   "failures": [
+    {
+     "seed": 3,
+     "raw_reward": -1.0,
+     "error": null
+    }
+   ],
+   "explanation": "the price can stay under the threshold for 400 ms, less than one observe-and-encode cycle on a loaded machine"
   },
   "terminal": {
    "family": "composite",

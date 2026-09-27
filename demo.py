@@ -1,4 +1,4 @@
-"""Four MiniWoB++ pages, solved by the oracle, seen through all five encoders.
+"""Four MiniWoB++ pages, solved by the oracle, seen through all seven encoders.
 
 For each page: the instruction, what each encoding costs in tokens, and whether the element
 the oracle had to act on survives in it (P = present, I = identifiable, A = actionable). The

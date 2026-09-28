@@ -121,3 +121,44 @@ def test_a_transient_failure_then_a_good_reply_succeeds():
     threading.Thread(target=run, daemon=True).start()
     client = OllamaClient(base_url=f"http://127.0.0.1:{srv.getsockname()[1]}", backoff_s=0.01)
     assert client.chat(MSGS, {}) == '{"action": "done"}'
+
+
+def _status_server(status: str, body: bytes, replies: int = 3) -> tuple[int, list[int]]:
+    """Answers every request with ``status`` and ``body``; counts the requests it saw."""
+    srv = socket.socket()
+    srv.bind(("127.0.0.1", 0))
+    srv.listen(replies)
+    seen: list[int] = []
+
+    def run() -> None:
+        srv.settimeout(3)
+        try:
+            for _ in range(replies):
+                conn, _ = srv.accept()
+                _read_request(conn)
+                seen.append(1)
+                head = f"HTTP/1.1 {status}\r\nContent-Type: application/json\r\nContent-Length: "
+                conn.sendall(head.encode() + str(len(body)).encode() + b"\r\n\r\n" + body)
+                conn.close()
+        except OSError:
+            pass
+        srv.close()
+
+    threading.Thread(target=run, daemon=True).start()
+    return srv.getsockname()[1], seen
+
+
+def test_a_4xx_is_not_retried_and_keeps_ollamas_reason():
+    port, seen = _status_server("404 Not Found", b'{"error":"model \\"nosuch\\" not found"}')
+    client = OllamaClient(base_url=f"http://127.0.0.1:{port}", backoff_s=0.01)
+    with pytest.raises(LLMUnavailableError, match='HTTP 404: model "nosuch" not found'):
+        client.chat(MSGS, {})
+    assert len(seen) == 1
+
+
+def test_a_5xx_is_retried_and_its_body_is_reported():
+    port, seen = _status_server("500 Internal Server Error", b'{"error":"runner crashed"}')
+    client = OllamaClient(base_url=f"http://127.0.0.1:{port}", backoff_s=0.01)
+    with pytest.raises(LLMUnavailableError, match="failed 3 times; last: HTTP 500: runner crashed"):
+        client.chat(MSGS, {})
+    assert len(seen) == 3

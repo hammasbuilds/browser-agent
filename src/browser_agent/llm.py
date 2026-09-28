@@ -11,6 +11,7 @@ import hashlib
 import http.client
 import json
 import time
+import urllib.error
 import urllib.request
 from collections.abc import Callable
 from dataclasses import dataclass, field
@@ -32,11 +33,29 @@ class LLMUnavailableError(RuntimeError):
     pass
 
 
+# 4xx statuses that can succeed on a retry; any other 4xx (unknown model, bad request) cannot.
+RETRYABLE_4XX = {408, 429}
+
+
+def _http_reason(exc: urllib.error.HTTPError) -> str:
+    """``HTTP 404: model "x" not found``: the status plus Ollama's own ``error`` text."""
+    try:
+        body = exc.read().decode("utf-8", errors="replace").strip()
+    except OSError:
+        body = ""
+    try:
+        detail = json.loads(body).get("error") or body
+    except (ValueError, AttributeError):
+        detail = body
+    return f"HTTP {exc.code}: {detail or exc.reason}"
+
+
 @dataclass
 class OllamaClient:
     """``/api/chat`` over HTTP. Transient failures (connection refused or dropped, a stalled
-    reply, a malformed or error payload) are retried with exponential backoff; if every
-    attempt fails the result is one :class:`LLMUnavailableError`, never a raw traceback."""
+    reply, a malformed or error payload, a 5xx) are retried with exponential backoff; if every
+    attempt fails the result is one :class:`LLMUnavailableError`, never a raw traceback. A 4xx
+    (other than 408/429) is the request's fault, so it fails at once, with the body's reason."""
 
     model: str = DEFAULT_MODEL
     base_url: str = DEFAULT_URL
@@ -68,6 +87,12 @@ class OllamaClient:
                 if not isinstance(content, str):
                     raise TypeError("message content is not a string")
                 return content
+            except urllib.error.HTTPError as exc:
+                last = _http_reason(exc)
+                if 400 <= exc.code < 500 and exc.code not in RETRYABLE_4XX:
+                    raise LLMUnavailableError(
+                        f"ollama at {self.base_url} refused the request; {last}"
+                    ) from None
             except (OSError, http.client.HTTPException, ValueError) as exc:
                 # OSError covers URLError, timeouts and dropped connections; ValueError covers
                 # a body that is not JSON.

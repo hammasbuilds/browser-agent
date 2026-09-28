@@ -1,4 +1,10 @@
+import contextlib
+import io
 import json
+import os
+import subprocess
+import sys
+from pathlib import Path
 
 import pytest
 
@@ -7,9 +13,14 @@ from browser_agent.encoders import ENCODERS
 
 
 def run(*argv):
-    with pytest.raises(SystemExit) as exc:
-        main(list(argv))
-    return str(exc.value)
+    """Exit code 2 and one ``error:`` line, whatever the bad input was."""
+    err = io.StringIO()
+    with contextlib.redirect_stderr(err):
+        code = main(list(argv))
+    assert code == 2, (argv, code)
+    (line,) = err.getvalue().splitlines()
+    assert line.startswith("error: "), line
+    return line
 
 
 def test_bad_inputs_get_one_line_reasons_not_tracebacks(tmp_path):
@@ -65,7 +76,12 @@ def test_report_writes_where_it_is_told(tmp_path):
     episodes.write_text("".join(json.dumps(e) + "\n" for e in EPISODES))
     out = tmp_path / "out"
     assert main(["report", "--episodes", str(episodes), "--out-dir", str(out)]) == 0
-    assert sorted(p.name for p in out.iterdir()) == ["oracle.json", "survival.json", "tokens.json"]
+    assert sorted(p.name for p in out.iterdir()) == [
+        "allow_list.json",
+        "oracle.json",
+        "survival.json",
+        "tokens.json",
+    ]
 
 
 def test_results_are_written_with_unix_line_endings(tmp_path):
@@ -75,3 +91,61 @@ def test_results_are_written_with_unix_line_endings(tmp_path):
     episodes.write_text("".join(json.dumps(e) + "\n" for e in EPISODES))
     main(["report", "--episodes", str(episodes), "--out-dir", str(tmp_path)])
     assert b"\r\n" not in (tmp_path / "survival.json").read_bytes()
+
+
+def test_encoder_names_are_stripped_and_empty_lists_refused(tmp_path, capsys):
+    from test_report import EPISODES
+
+    episodes = tmp_path / "oracle.jsonl"
+    episodes.write_text("".join(json.dumps(e) + "\n" for e in EPISODES))
+    common = ["agent", "--dry-run", "--oracle-episodes", str(episodes)]
+    assert main([*common, "--encoder", "som, axtree"]) == 0
+    out = capsys.readouterr().out
+    assert "  som " in out and "  axtree " in out and "clean_dom" not in out
+    assert "names no encoder" in run(*common, "--encoder", " , ")
+
+
+def test_argparse_and_our_own_bad_input_share_exit_code_2():
+    with pytest.raises(SystemExit) as exc:
+        main(["oracle", "--seeds", "many"])
+    assert exc.value.code == 2
+    assert "at least 1" in run("oracle", "--seeds", "0")
+
+
+def test_every_flag_has_help_and_shows_its_default(capsys):
+    from browser_agent.cli import build_parser
+
+    parser = build_parser()
+    subparsers = next(a for a in parser._actions if a.dest == "command").choices
+    for name, sub in subparsers.items():
+        for action in sub._actions:
+            if action.dest != "help":
+                assert action.help, (name, action.dest)
+    with pytest.raises(SystemExit):
+        main(["agent", "--help"])
+    assert "(default: 5)" in capsys.readouterr().out
+
+
+def test_default_paths_do_not_depend_on_the_working_directory(tmp_path, monkeypatch):
+    from browser_agent import cli
+
+    monkeypatch.chdir(tmp_path)
+    assert cli.RESULTS.is_absolute() and (cli.ROOT / "vendor").is_dir()
+    assert cli.ORACLE_EPISODES.parent == cli.RESULTS
+
+
+def test_unicode_output_survives_a_redirected_cp1252_stdout(tmp_path):
+    # Windows gives a redirected stdout the ANSI code page; before the fix, printing a
+    # character outside it (unicode-test's page, here a model tag) raised UnicodeEncodeError.
+    from test_report import EPISODES
+
+    episodes = tmp_path / "oracle.jsonl"
+    episodes.write_text("".join(json.dumps(e) + "\n" for e in EPISODES))
+    argv = ["agent", "--dry-run", "--model", "q✓Ā", "--oracle-episodes", str(episodes)]
+    env = {**os.environ, "PYTHONIOENCODING": "cp1252"}
+    env["PYTHONPATH"] = str(Path(__file__).parents[1] / "src")
+    out = subprocess.run(
+        [sys.executable, "-m", "browser_agent.cli", *argv], capture_output=True, env=env
+    )
+    assert out.returncode == 0, out.stderr.decode("utf-8", "replace")
+    assert "model q✓Ā," in out.stdout.decode("utf-8")

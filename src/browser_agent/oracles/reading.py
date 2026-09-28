@@ -219,8 +219,10 @@ def odd_or_even(ctx: OracleContext) -> Iterator[Step]:
 def find_greatest(ctx: OracleContext) -> Iterator[Step]:
     values = [int(v) for v in ctx.texts("#cardholder .card-value")]
     best = values.index(max(values))
-    # The value is in the card's DOM text but face-down (font-size 0) until the card is clicked.
-    yield Step("click", f"#cardholder .card >> nth={best}", needs=(str(values[best]),))
+    # The values are face-down (font-size 0) until a card is clicked: an agent is meant to find
+    # the greatest by turning cards over, so the value it would read is a leak, not a need. The
+    # oracle reads it anyway to know which card to click; the target is picked by position only.
+    yield Step("click", f"#cardholder .card >> nth={best}")
     yield submit("#submit")
 
 

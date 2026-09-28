@@ -178,3 +178,27 @@ def test_page_errors_count_as_failures_and_are_reported():
     assert summary["page_errors"] == 1
     assert summary["encoders"]["som"]["episodes"] == 2
     assert summary["encoders"]["som"]["success_macro"]["mean"] == 0.5
+
+
+def test_allow_list_summary_separates_styling_from_data_attributes():
+    from browser_agent.report import allow_list_summary
+
+    # click-color: only the full wide list keeps it (a data-* rescue); click-test: all keep it;
+    # click-link: +class/style already keeps it
+    styling = {"raw_html", "clean_dom_wide", "clean_dom_wide_no_data"}
+    eps = [
+        episode("click-test", 0, [step(ALL)]),
+        episode("click-color", 0, [step({"raw_html", "clean_dom_wide", "som_listeners_wide"})]),
+        episode("click-link", 0, [step(styling | {"som_listeners_wide"})]),
+    ]
+    out = allow_list_summary(eps, token_summary(eps))
+    wide, no_data = out["encoders"]["clean_dom_wide"], out["encoders"]["clean_dom_wide_no_data"]
+    assert wide["mean"] == 1.0 and no_data["mean"] == round(2 / 3, 4)
+    assert no_data["tasks"] == 3 and no_data["tasks_losing_some"] == ["click-color"]
+    assert no_data["tokens_first_obs_median"] == 800 and "ci95" in no_data
+    assert sorted(out["per_task"]) == ["click-color", "click-link"]
+    assert out["clean_dom: tasks gained by +class/style/data-*"] == ["click-color", "click-link"]
+    assert out["clean_dom: of those, gained by +class/style alone"] == ["click-link"]
+    assert out["som_listeners: of those, gained by +class/style alone"] == []
+    contrasts = survival_summary(eps)["contrasts_usable_given_raw"]
+    assert contrasts["clean_dom_wide - clean_dom_wide_no_data"]["mean"] == round(1 / 3, 4)

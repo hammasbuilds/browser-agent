@@ -1,4 +1,4 @@
-"""Seven ways to turn one :class:`Snapshot` into the text a model reads.
+"""Nine ways to turn one :class:`Snapshot` into the text a model reads.
 
 Every encoder returns an :class:`Encoding`: the text itself, plus a list of fragments saying
 which element each piece of text came from, what a reader can learn from it, and which index
@@ -24,6 +24,9 @@ The allow-list ablation: ``clean_dom_wide`` and ``som_listeners_wide`` are the s
 with ``class``, ``style`` and every ``data-*`` attribute added to the allow-list. The narrow
 list is what DOM-distilling agents typically keep; the wide one measures what that choice costs
 (colour lives in ``style``, icon identity in ``class``) and what keeping it costs in tokens.
+``clean_dom_wide_no_data`` and ``som_listeners_wide_no_data`` add ``class`` and ``style`` but
+no ``data-*``: MiniWoB++ often writes the grader's answer into ``data-*`` (``data-color`` in
+click-shades), which a real page would not, so these separate styling from that leak.
 """
 
 from __future__ import annotations
@@ -116,6 +119,13 @@ def raw_html(snap: Snapshot) -> Encoding:
 # ---- cleaned DOM ---------------------------------------------------------------------------
 
 
+def _variant(base: str, wide: bool, data: bool) -> str:
+    """The encoder name for an allow-list variant; ``data`` only matters when ``wide``."""
+    if not wide:
+        return base
+    return f"{base}_wide" if data else f"{base}_wide_no_data"
+
+
 def clean_dom(snap: Snapshot, wide: bool = False, data: bool = True) -> Encoding:
     frags: list[Fragment] = []
     visible = snap.visible
@@ -151,7 +161,7 @@ def clean_dom(snap: Snapshot, wide: bool = False, data: bool = True) -> Encoding
         return text
 
     text = "\n".join(filter(None, (render(r) for r in snap.roots)))
-    return Encoding("clean_dom_wide" if wide else "clean_dom", text, frags)
+    return Encoding(_variant("clean_dom", wide, data), text, frags)
 
 
 # ---- accessibility tree --------------------------------------------------------------------
@@ -317,7 +327,7 @@ def som(snap: Snapshot) -> Encoding:
 def som_listeners(snap: Snapshot, wide: bool = False, data: bool = True) -> Encoding:
     return _som(
         snap,
-        "som_listeners_wide" if wide else "som_listeners",
+        _variant("som_listeners", wide, data),
         lambda n: looks_interactive(snap, n) or n.id in snap.clickable,
         wide,
         data,
@@ -332,8 +342,10 @@ ENCODERS: dict[str, Callable[[Snapshot], Encoding]] = {
     "som_listeners": som_listeners,
     "clean_dom_wide": lambda snap: clean_dom(snap, wide=True),
     "som_listeners_wide": lambda snap: som_listeners(snap, wide=True),
+    "clean_dom_wide_no_data": lambda snap: clean_dom(snap, wide=True, data=False),
+    "som_listeners_wide_no_data": lambda snap: som_listeners(snap, wide=True, data=False),
 }
-# The five main encoders; the *_wide pair is the attribute allow-list ablation.
+# The five main encoders; the *_wide and *_wide_no_data pairs are the allow-list ablation.
 MAIN_ENCODERS = ("raw_html", "clean_dom", "axtree", "som", "som_listeners")
 
 

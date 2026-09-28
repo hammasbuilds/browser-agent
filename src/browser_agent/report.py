@@ -1,8 +1,9 @@
-"""Turn oracle episodes (JSONL) into the three results files the README quotes.
+"""Turn oracle episodes (JSONL) into the four results files the README quotes.
 
-``results/oracle.json``    does the harness solve each task? (per-task success, Wilson CI)
-``results/tokens.json``    observation cost per encoder, in Qwen2.5 tokens
-``results/survival.json``  target survival per encoder: present / identifiable / actionable
+``results/oracle.json``      does the harness solve each task? (per-task success, Wilson CI)
+``results/tokens.json``      observation cost per encoder, in Qwen2.5 tokens
+``results/survival.json``    target survival per encoder: present / identifiable / actionable
+``results/allow_list.json``  the allow-list ablation: narrow vs +class/style vs +data-* too
 
 Unit of analysis: the task. Each task contributes its mean over seeds; intervals bootstrap
 over tasks. Survival uses only steps from episodes the oracle solved, so every target measured
@@ -125,7 +126,16 @@ CONTRASTS = [
     ("clean_dom", "som_listeners"),
     ("clean_dom_wide", "clean_dom"),
     ("som_listeners_wide", "som_listeners"),
+    ("clean_dom_wide_no_data", "clean_dom"),
+    ("som_listeners_wide_no_data", "som_listeners"),
+    ("clean_dom_wide", "clean_dom_wide_no_data"),
+    ("som_listeners_wide", "som_listeners_wide_no_data"),
 ]
+# narrow encoder -> (+class/style, +class/style/data-*)
+ALLOW_LIST = {
+    "clean_dom": ("clean_dom_wide_no_data", "clean_dom_wide"),
+    "som_listeners": ("som_listeners_wide_no_data", "som_listeners_wide"),
+}
 # Which needs count, for the sensitivity analysis (survival.need_source tags every need).
 NEED_VARIANTS = {
     "all_needs": {"instruction", "page", "markup"},
@@ -275,6 +285,61 @@ def survival_summary(episodes: list[Episode]) -> dict[str, Any]:
         out["pairs_usable_given_raw"][pair]["tasks_losing_some"] = sorted(
             t for t, v in by_task.items() if v < 1
         )
+    return out
+
+
+def usable_given_raw_by_task(episodes: list[Episode]) -> dict[str, dict[str, float]]:
+    """encoder -> task -> share of the raw-identifiable targets this encoder keeps usable."""
+    kept: dict[str, dict[str, list[int]]] = defaultdict(lambda: defaultdict(list))
+    for ep in episodes:
+        if not _success(ep):
+            continue
+        for step in ep["steps"]:
+            if step["checks"] and step["checks"]["raw_html"]["identifiable"]:
+                for name in ENCODERS:
+                    kept[name][ep["task"]].append(int(_usable(step, name)))
+    return {
+        name: {t: mean(v) for t, v in sorted(by_task.items())} for name, by_task in kept.items()
+    }
+
+
+def allow_list_summary(episodes: list[Episode], tokens: dict[str, Any]) -> dict[str, Any]:
+    """What widening the allow-list buys, split into styling (``class``, ``style``) and
+    MiniWoB's ``data-*`` bookkeeping, which often holds the grader's answer.
+
+    For each of the six encoders: "kept" over all tasks with its bootstrap CI, and its token
+    cost. Then, per task any narrow encoder loses, the kept share of every variant, and which
+    rescues by the full wide list survive without ``data-*``.
+    """
+    by_task = usable_given_raw_by_task(episodes)
+    out: dict[str, Any] = {
+        "note": "kept = usable_given_raw (see survival.json); CI bootstraps tasks; tokens are "
+        "the median first observation, and its median per-task share of raw_html",
+        "encoders": {},
+        "per_task": {},
+    }
+    for narrow, variants in ALLOW_LIST.items():
+        for name in (narrow, *variants):
+            values = by_task[name]
+            entry = _interval(list(values.values()))
+            entry["tasks"] = len(values)
+            entry["tasks_losing_some"] = sorted(t for t, v in values.items() if v < 1)
+            entry["tokens_first_obs_median"] = tokens[name]["first_obs"]["median"]
+            entry["share_of_raw_html_median"] = tokens[name]["share_of_raw_html_median"]
+            out["encoders"][name] = entry
+    losing = sorted({t for n in ALLOW_LIST for t in out["encoders"][n]["tasks_losing_some"]})
+    for task in losing:
+        out["per_task"][task] = {
+            name: round(by_task[name][task], 4)
+            for narrow, variants in ALLOW_LIST.items()
+            for name in (narrow, *variants)
+        }
+    for narrow, (no_data, wide) in ALLOW_LIST.items():
+        gained = [t for t, v in out["per_task"].items() if v[wide] > v[narrow]]
+        out[f"{narrow}: tasks gained by +class/style/data-*"] = gained
+        out[f"{narrow}: of those, gained by +class/style alone"] = [
+            t for t in gained if out["per_task"][t][no_data] > out["per_task"][t][narrow]
+        ]
     return out
 
 

@@ -1,6 +1,13 @@
 from conftest import load_snapshot
 
-from browser_agent.encoders import ENCODERS, clean_dom, encode_all, looks_interactive, som
+from browser_agent.encoders import (
+    ENCODERS,
+    clean_dom,
+    encode_all,
+    looks_interactive,
+    som,
+    som_listeners,
+)
 from browser_agent.snapshot import Node, Snapshot
 
 
@@ -137,3 +144,31 @@ def test_the_wide_list_adds_only_class_style_and_data_attributes():
     text = clean_dom(snap, wide=True).text
     assert 'class="b"' in text and 'style="x"' in text and 'data-k="v"' in text
     assert "onclick" not in text
+
+
+def test_the_no_data_variant_keeps_class_and_style_but_drops_every_data_attribute():
+    snap = snap_of(
+        node(
+            1,
+            -1,
+            "button",
+            ["Go"],
+            attrs=[("class", "b"), ("style", "x"), ("data-k", "v"), ("id", "go")],
+        )
+    )
+    enc = clean_dom(snap, wide=True, data=False)
+    assert enc.name == "clean_dom_wide_no_data"
+    assert 'class="b"' in enc.text and 'style="x"' in enc.text and 'id="go"' in enc.text
+    assert "data-k" not in enc.text and "v" not in enc.fragments[0].evidence.split()
+    listed = som_listeners(snap, wide=True, data=False)
+    assert listed.name == "som_listeners_wide_no_data" and "data-k" not in listed.text
+    # data only matters on the wide list: the narrow encoder keeps its own name
+    assert clean_dom(snap, data=False).name == "clean_dom"
+
+
+def test_click_colour_survives_without_data_attributes_through_the_style():
+    encs = encode_all(load_snapshot("click-color-0"))
+    for name in ("clean_dom_wide_no_data", "som_listeners_wide_no_data"):
+        assert "data-color" not in encs[name].text, name
+        assert "background-color: white" in encs[name].text, name
+    assert encs["som_listeners_wide_no_data"].handles == encs["som_listeners"].handles

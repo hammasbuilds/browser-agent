@@ -1,8 +1,9 @@
 """Run the scripted oracle over tasks and seeds, measuring every encoding at every step.
 
-Each step: observe the page, encode it seven ways, count tokens, resolve the oracle's target,
-check the target against every encoding (:mod:`browser_agent.survival`), then execute the step
-through the shared action executor and read the benchmark's reward.
+Each step: observe the page, encode it nine ways (every entry of ``ENCODERS``), count tokens,
+resolve the oracle's target, check the target against every encoding
+(:mod:`browser_agent.survival`), then execute the step through the shared action executor and
+read the benchmark's reward.
 """
 
 from __future__ import annotations

@@ -15,7 +15,6 @@
   <img src="https://img.shields.io/badge/browser-Playwright%20Chromium-informational" alt="browser">
   <img src="https://img.shields.io/badge/benchmark-MiniWoB%2B%2B%20(101%20tasks)-success" alt="benchmark">
   <img src="https://img.shields.io/badge/tests-95%20passing-success" alt="tests">
-  <img src="https://img.shields.io/badge/model%20arm-queued-lightgrey" alt="model arm">
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-MIT-green" alt="license"></a>
 </p>
 
@@ -23,6 +22,8 @@
 
 Inspired by [browser-use](https://github.com/browser-use/browser-use) and
 [browserbase/stagehand](https://github.com/browserbase/stagehand); no code from either is used.
+
+**Status:** encodings, oracle and every number below: done. Model arm: built and tested against a fake; GPU run pending.
 
 ## The through-line
 
@@ -43,7 +44,7 @@ flowchart TD
     C5 --> S
     C6 --> S
     T --> S
-    S --> M["model arm, queued:<br/>qwen2.5:14b under each encoding"]
+    S --> M["model arm (GPU run pending):<br/>qwen2.5:14b under each encoding"]
 
     style S fill:#2563eb,color:#fff
 ```
@@ -65,7 +66,7 @@ variants that widen the attribute allow-list.
 ## Findings
 
 All numbers come from `results/*.json`, produced by `browser-agent oracle --seeds 20` and
-`browser-agent report` on this machine. The unit is the task: each task contributes its mean
+`browser-agent report`. The unit is the task: each task contributes its mean
 over seeds, and the intervals are 95% bootstraps over the 101 tasks. Survival counts only the
 5,742 target steps of episodes the oracle actually solved.
 
@@ -177,10 +178,10 @@ window that can be shorter than one observe-and-encode cycle, which now includes
 encodings. It solved 20/20 in the previous run: it depends on machine load, as does
 `button-delay`, whose 150 ms tolerance spans one cycle.
 
-### The model arm (built, tested with a fake, queued)
+### The model arm (GPU run pending)
 
 The findings above bound what a model *could* do with each encoding. Whether
-`qwen2.5:14b-instruct` actually does it is queued: `scripts/run_models.sh` runs every
+`qwen2.5:14b-instruct` actually does it is what `scripts/run_models.sh` measures. It runs every
 oracle-solved (task, seed) for seeds 0-4 under all seven encodings, 3,381 episodes and about
 13,020 calls (26,040 at most), then reports, per model (never pooled), success per encoding and
 family with Wilson intervals, steps, tokens, and success split by whether that episode's
@@ -357,8 +358,8 @@ stalls, or returns garbage or an error payload: each is retried, then one clean 
 ## What this does NOT do
 
 - **It does not say which encoding makes a model succeed.** Survival is an upper bound on what
-  a model could do with an encoding. The model arm that measures actual success is built and
-  queued, not run.
+  a model could do with an encoding. The model arm that measures actual success is built, but
+  its GPU run is pending.
 - **No screenshot arm.** No vision model is installed. The four tasks even the wide
   allow-list loses, and the colour tasks a real page would not label in `data-*`, are the
   obvious place to test one.
